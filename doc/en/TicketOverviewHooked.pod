@@ -1,0 +1,83 @@
+=head1 NAME
+
+TicketOverviewHooked - provide a simple mechnism to colorize rows in small ticket overview
+
+=head1 DESCRIPTION
+
+Sometimes it is necessary to identify "special" tickets very quickly. "special" can mean
+everything - maybe tickets that are in some way incomplete, tickets that represent
+orders of your goods or maybe tickets from VIPs.
+
+To identify these tickets in the ticket overview (status view or queue view) it would be great
+to have the rows of these tickets colorized.
+
+This package provides a simple mechanism to achieve this.
+
+=head1 HOW IT WORKS
+
+It is really simple: For every row a so called "hook" is called with the ticket id as a parameter.
+If the ticket meets some criteria, the hook as to return a color code (the hex code as used in
+HTML).
+
+=head2 What happens if a ticket matches several hooks?
+
+The hooks are prioritized (via SysConfig) and the hooks are called in priority order and as soon
+as one hook matches, the other hooks are not called. This is to ensure that the row is colorized
+with the most important color.
+
+=head1 CONFIGURATION
+
+There is only one config option that is really needed: TicketOverview::Hooks (Group Ticket, 
+Subgroup TicketOverview). This is a hash where the keys represent the priority. The lower the
+priority the more important is the hook. The value is the module name that implements the hook.
+
+This package comes with one sample hook that identifies tickets in the queue "Junk".
+
+=head1 OWN HOOKS
+
+To write own hooks is really easy for everyone who knows a bit of Perl and OTRS. A hook is a
+Perl module that meets some requirements:
+
+=over 4
+
+=item * Object oriented
+
+The hook needs to be implemented with object orientation and a method named C<new> (that is
+the constructor). Everybody who has written some OTRS modules yet, should know this.
+
+=item * Run()
+
+The Run method gets the ticket ID as a parameter and this method has to return the hex value
+of the color if the ticket meets the criteria - C<undef> otherwise.
+
+=back
+
+=head2 Example
+
+  sub Run {
+      my ( $Self, %Param ) = @_;
+  
+      # check needed stuff
+      for my $Needed (qw(TicketID)) {
+          if ( !$Param{$Needed} ) {
+              $Self->{LogObject}->Log(
+                  Priority => 'error',
+                  Message  => "Need $Needed!",
+              );
+              return;
+          }
+      }
+  
+      my %TicketData = $Self->{TicketObject}->TicketGet(
+          TicketID => $Param{TicketID},
+      );
+  
+      return if $TicketData{Queue} ne 'Junk';
+      return $Self->{ConfigObject}->Get('Hook::Junk'); # cdcdcd
+  }
+
+=head1 LICENSE AND AUTHOR
+
+Author: Renee Baecker E<lt>opar@perl-services.deE<gt>
+License: AGPL 3
+

@@ -1,0 +1,244 @@
+# --
+# AgentTicketOverviewSmall.dtl - html for ticket overview table
+# Copyright (C) 2010-2011 Perl-Services.de http://perl-services.de/
+# --
+# $Id: AgentTicketOverviewSmall.dtl,v 1.3 2011/04/18 11:12:16 rb Exp $
+# $OldId: AgentTicketOverviewSmall.dtl,v 1.75 2010/12/06 15:12:08 mn Exp $
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (AGPL). If you
+# did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+# --
+<!-- dtl:block:DocumentActionRow -->
+<ul class="Actions">
+<!-- dtl:block:DocumentActionRowBulk -->
+    <li id="BulkAction" class="Bulk Inactive $QData{"CSS"}">
+        <a href="#">$Text{"$Data{"Name"}"}</a>
+    </li>
+<!-- dtl:block:DocumentActionRowBulk -->
+<!-- dtl:block:DocumentActionRowItem -->
+    <li class="$QData{"CSS"}"><a href="#">$Text{"$Data{"Name"}"}</a></li>
+<!-- dtl:block:DocumentActionRowItem -->
+</ul>
+<!-- dtl:block:DocumentActionRow -->
+
+<!-- dtl:block:DocumentContent -->
+<!-- dtl:js_on_document_complete -->
+<script type="text/javascript">//<![CDATA[
+    Core.UI.ActionRow.Init();
+//]]></script>
+<!-- dtl:js_on_document_complete -->
+<div id="OverviewBody" class="Overview FixedHeader">
+<!-- dtl:block:NoTicketFound -->
+    <div id="EmptyMessageSmall">
+        $Text{"No ticket data found."}
+    </div>
+<!-- dtl:block:NoTicketFound -->
+    <form action="$Env{"CGIHandle"}" method="post" enctype="multipart/form-data" name="matrix">
+        <input type="hidden" name="Action" value="AgentTicketBulk"/>
+        <input type="hidden" name="TicketID" value=""/>
+<!-- dtl:block:OverviewTable-->
+        <table id="FixedTable" class="TableSmall NoCellspacing">
+<!-- dtl:block:TableHeader -->
+            <thead>
+                <tr>
+<!-- dtl:block:BulkNavBar -->
+                    <th class="Checkbox Fixed">
+                    <input type="checkbox" class="Checkbox AutocompleteOff" title="$Text{"Select all"}" id="SelectAllTickets" />
+                    </th>
+<!-- dtl:block:BulkNavBar -->
+<!-- dtl:block:OverviewNavBarPageFlag -->
+                    <th class="Fixed $QData{"CSS"}">
+<!-- dtl:block:OverviewNavBarPageFlagLink -->
+                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=$LQData{"Name"};OrderBy=$LQData{"OrderBy"}" title="$Text{"$Data{"Name"}"}"></a>
+<!-- dtl:block:OverviewNavBarPageFlagLink -->
+<!-- dtl:block:OverviewNavBarPageFlagEmpty -->
+                    <span title="$Text{"$Data{"Name"}"}"></span>
+<!-- dtl:block:OverviewNavBarPageFlagEmpty -->
+                    </th>
+<!-- dtl:block:OverviewNavBarPageFlag -->
+<!-- dtl:block:OverviewNavBarPageTicketNumber -->
+                    <th class="TicketNumber $QData{"CSS"}">
+                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=TicketNumber;OrderBy=$LQData{"OrderBy"}">$Config{"Ticket::Hook"}</a>
+                    </th>
+<!-- dtl:block:OverviewNavBarPageTicketNumber -->
+<!-- dtl:block:OverviewNavBarPageAge -->
+                    <th class="Age $QData{"CSS"}">
+                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Age;OrderBy=$LQData{"OrderBy"}">$Text{"Age"}</a>
+                    </th>
+<!-- dtl:block:OverviewNavBarPageAge -->
+<!-- dtl:block:OverviewNavBarPageEscalationTime -->
+                    <th class="EscalationTime $QData{"CSS"}">
+                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=EscalationTime;OrderBy=$LQData{"OrderBy"}">$Text{"Escalation in"}</a>
+                    </th>
+<!-- dtl:block:OverviewNavBarPageEscalationTime -->
+<!-- dtl:block:OverviewNavBarPageLastCustomerSubject -->
+                    <th class="LastCustomerSubject"><span>$Text{"From"} / $Text{"Subject"}</span></th>
+<!-- dtl:block:OverviewNavBarPageLastCustomerSubject -->
+<!-- dtl:block:OverviewNavBarPageTitle -->
+                    <th class="Title"><span>$Text{"From"} / $Text{"Title"}</span></th>
+<!-- dtl:block:OverviewNavBarPageTitle -->
+<!-- dtl:block:OverviewNavBarPageState -->
+                    <th class="State $QData{"CSS"}">
+                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=State;OrderBy=$LQData{"OrderBy"}">$Text{"State"}</a>
+                    </th>
+<!-- dtl:block:OverviewNavBarPageState -->
+<!-- dtl:block:OverviewNavBarPageLock -->
+                    <th class="Lock $QData{"CSS"}">
+                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Lock;OrderBy=$LQData{"OrderBy"}">$Text{"Locked"}</a>
+                    </th>
+<!-- dtl:block:OverviewNavBarPageLock -->
+<!-- dtl:block:OverviewNavBarPageQueue -->
+                    <th class="Queue $QData{"CSS"}">
+                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Queue;OrderBy=$LQData{"OrderBy"}">$Text{"Queue"}</a>
+                    </th>
+<!-- dtl:block:OverviewNavBarPageQueue -->
+<!-- dtl:block:OverviewNavBarPageOwner -->
+                    <th class="Owner $QData{"CSS"}">
+                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Owner;OrderBy=$LQData{"OrderBy"}">$Text{"Owner"}</a>
+                    </th>
+<!-- dtl:block:OverviewNavBarPageOwner -->
+<!-- dtl:block:OverviewNavBarPageCustomerID -->
+                    <th class="CustomerID Last $QData{"CSS"}">
+                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=CustomerID;OrderBy=$LQData{"OrderBy"}">$Text{"CustomerID"}</a>
+                    </th>
+<!-- dtl:block:OverviewNavBarPageCustomerID -->
+                </tr>
+            </thead>
+<!-- dtl:block:TableHeader-->
+<!-- dtl:block:TableBody-->
+            <tbody>
+<!-- dtl:block:Record -->
+# ---
+# PS
+# ---
+#                <tr id="TicketID_$QData{"TicketID"}" class="MasterAction">
+                <tr id="TicketID_$QData{"TicketID"}" class="MasterAction $QData{"Hooked"}">
+# ---
+<!-- dtl:block:Bulk -->
+                    <td class="Checkbox Fixed NonTextContent">
+                        <input class="Checkbox AutocompleteOff" type="checkbox" name="TicketID" value="$QData{"TicketID"}" />
+                    </td>
+<!-- dtl:block:Bulk -->
+<!-- dtl:block:ContentLargeTicketGenericRowMeta -->
+                    <td class="$QData{"ClassTable"} Fixed" title="$Text{"$Data{"Title"}"}">
+<!-- dtl:block:ContentLargeTicketGenericRowMetaImage -->
+                        <div class="$QData{"Class"} Small" title="$Text{"$Data{"Title"}"}">
+                            <span class="$QData{"ClassSpan"}">$Text{"$Data{"Title"}"}</span>
+                        </div>
+<!-- dtl:block:ContentLargeTicketGenericRowMetaImage -->
+                    </td>
+<!-- dtl:block:ContentLargeTicketGenericRowMeta -->
+                    <td>
+                        <a href="$Env{"Baselink"}Action=AgentTicketZoom;TicketID=$LQData{"TicketID"}" title="$QData{"Title"}" class="MasterActionLink">$Data{"TicketNumber"}</a>
+                    </td>
+                    <td>
+                        $QData{"Age"}
+                    </td>
+<!-- dtl:block:RecordEscalationTime -->
+                    <td>
+                        <div title="$Text{"Service Time"}: $QData{"EscalationTimeWorkingTime"} - $TimeShort{"$QData{"EscalationDestinationDate"}"}" class="$QData{"EscalationClass"}">$QData{"EscalationTimeHuman"}<br/>$TimeShort{"$QData{"UpdateTimeDestinationDate"}"}</div>
+                    </td>
+<!-- dtl:block:RecordEscalationTime -->
+                    <td>
+                        <div title="$QData{"From"}">$QData{"FromRealname","30"}</div>
+<!-- dtl:block:RecordLastCustomerSubject -->
+                        <div title="$QData{"Subject"}">$QData{"Subject","30"}</div>
+<!-- dtl:block:RecordLastCustomerSubject -->
+<!-- dtl:block:RecordTicketTitle -->
+                        <div title="$QData{"Title"}">$QData{"Title","30"}</div>
+<!-- dtl:block:RecordTicketTitle -->
+                    </td>
+                    <td width="8%">
+                        <div title="$Quote{"$Text{"$Data{"State"}"}"}">$Quote{"$Text{"$Data{"State"}"}","30"}</div>
+                    </td>
+                    <td>
+                        <div title="$Quote{"$Text{"$Data{"Lock"}"}"}">$Quote{"$Text{"$Data{"Lock"}"}","30"}</div>
+                    </td>
+                    <td width="10%">
+                        <div title="$QData{"Queue"}">$QData{"Queue","30"}</div>
+                    </td>
+                    <td>
+                        <div title="$QData{"UserFirstname"} $QData{"UserLastname"} ($QData{"Owner"})">$QData{"UserFirstname","15"} $QData{"UserLastname","15"}</div>
+                    </td>
+                    <td>
+                        <a href="$Env{"Baselink"}Action=AgentTicketCustomer;TicketID=$LQData{"TicketID"}" class="AsPopup">
+                            <span title="$QData{"CustomerID"}">$QData{"CustomerID","15"}</span>
+                        </a>
+                        <div title="$QData{"CustomerName"}">$QData{"CustomerName","15"}</div>
+                    </td>
+                </tr>
+
+<!-- dtl:block:DocumentReadyActionRowAdd -->
+<!-- dtl:js_on_document_complete -->
+<script type="text/javascript">//<![CDATA[
+    Core.UI.ActionRow.AddActions($('#TicketID_$QData{"TicketID"}'), $Data{"Data"});
+//]]></script>
+<!-- dtl:js_on_document_complete -->
+<!-- dtl:block:DocumentReadyActionRowAdd -->
+
+<!-- dtl:block:Record -->
+            </tbody>
+<!-- dtl:block:TableBody-->
+        </table>
+<!-- dtl:block:OverviewTable-->
+    </form>
+</div>
+<!-- dtl:block:DocumentReadyStart -->
+<!-- dtl:js_on_document_complete -->
+<script type="text/javascript">//<![CDATA[
+    Core.UI.InitTableHead($('#FixedTable thead'), $('#FixedTable tbody'));
+    Core.UI.StaticTableControl($('#OverviewControl').add($('#OverviewBody')));
+    $('.MasterAction').bind('click', function (Event) {
+        window.location = $(this).find('.MasterActionLink').attr('href');
+    });
+    $(window).resize(function() {
+        Core.UI.AdjustTableHead($('#FixedTable thead'), $('#FixedTable tbody'), 0);
+    });
+//]]></script>
+<!-- dtl:js_on_document_complete -->
+<!-- dtl:block:DocumentReadyStart -->
+<!-- dtl:block:DocumentContent -->
+
+<!-- dtl:block:DocumentMenuItem -->
+<li id="$QData{"ID"}">
+    <a href="#" title="$Text{"$Data{"Description"}"}">$Text{"$Data{"Name"}"}</a>
+</li>
+<!-- dtl:block:DocumentMenuItem -->
+<!-- dtl:block:DocumentMenuItemMoveForm -->
+<li class="$QData{"Class"}">
+    <form title="$Text{"Move ticket to a different queue"}" action="$Env{"CGIHandle"}" method="post">
+        <input type="hidden" name="Action" value="AgentTicketMove"/>
+        <input type="hidden" name="QueueID" value="$QData{"QueueID"}"/>
+        <input type="hidden" name="TicketID" value="$QData{"TicketID"}"/>
+        <label for="DestQueueID" class="InvisibleText">$Text{"Change queue"}:</label>
+        $Data{"MoveQueuesStrg"}
+    </form>
+<!-- dtl:js_on_document_complete -->
+<script type="text/javascript">//<![CDATA[
+    $('select[name=DestQueueID]').live('change', function (Event) {
+        $(this).closest('form').submit();
+    });
+//]]></script>
+<!-- dtl:js_on_document_complete -->
+</li>
+<!-- dtl:block:DocumentMenuItemMoveForm -->
+
+<!-- dtl:js_on_document_complete -->
+<script type="text/javascript">//<![CDATA[
+$('a.AsPopup').bind('click', function (Event) {
+    Core.UI.Popup.OpenPopup($(this).attr('href'), 'Action');
+    return false;
+});
+//]]></script>
+<!-- dtl:js_on_document_complete -->
+# ---
+# PS
+# ---
+<script type="text/javascript" src="$Config{"Frontend::JavaScriptPath"}PerlServices.TicketOverview.js"></script>
+<!-- dtl:js_on_document_complete -->
+<script type="text/javascript">//<![CDATA[
+    PerlServices.TicketOverview.ColorizeRows();
+//]]></script>
+<!-- dtl:js_on_document_complete -->
+# ---
