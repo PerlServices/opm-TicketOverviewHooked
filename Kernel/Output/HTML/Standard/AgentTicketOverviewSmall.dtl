@@ -1,9 +1,7 @@
 # --
 # AgentTicketOverviewSmall.dtl - html for ticket overview table
-# Copyright (C) 2010-2011 Perl-Services.de http://perl-services.de/
-# --
-# $Id: AgentTicketOverviewSmall.dtl,v 1.3 2011/04/18 11:12:16 rb Exp $
-# $OldId: AgentTicketOverviewSmall.dtl,v 1.75 2010/12/06 15:12:08 mn Exp $
+# Copyright (C) 2001-2013 OTRS AG, http://otrs.com/
+# Copyright (C) 2010-2013 Perl-Services.de http://perl-services.de/
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -44,32 +42,32 @@
                 <tr>
 <!-- dtl:block:BulkNavBar -->
                     <th class="Checkbox Fixed">
-                    <input type="checkbox" class="Checkbox AutocompleteOff" title="$Text{"Select all"}" id="SelectAllTickets" />
+                        <input type="checkbox" class="Checkbox" title="$Text{"Select all"}" id="SelectAllTickets" autocomplete="off" />
                     </th>
 <!-- dtl:block:BulkNavBar -->
 <!-- dtl:block:OverviewNavBarPageFlag -->
                     <th class="Fixed $QData{"CSS"}">
 <!-- dtl:block:OverviewNavBarPageFlagLink -->
-                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=$LQData{"Name"};OrderBy=$LQData{"OrderBy"}" title="$Text{"$Data{"Name"}"}"></a>
+                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=$LQData{"Name"};OrderBy=$LQData{"OrderBy"}" title="$Text{"$Data{"Name"}"}"></a>
 <!-- dtl:block:OverviewNavBarPageFlagLink -->
 <!-- dtl:block:OverviewNavBarPageFlagEmpty -->
-                    <span title="$Text{"$Data{"Name"}"}"></span>
+                        <span title="$Text{"$Data{"Name"}"}"></span>
 <!-- dtl:block:OverviewNavBarPageFlagEmpty -->
                     </th>
 <!-- dtl:block:OverviewNavBarPageFlag -->
 <!-- dtl:block:OverviewNavBarPageTicketNumber -->
                     <th class="TicketNumber $QData{"CSS"}">
-                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=TicketNumber;OrderBy=$LQData{"OrderBy"}">$Config{"Ticket::Hook"}</a>
+                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=TicketNumber;OrderBy=$LQData{"OrderBy"}">$Config{"Ticket::Hook"}</a>
                     </th>
 <!-- dtl:block:OverviewNavBarPageTicketNumber -->
 <!-- dtl:block:OverviewNavBarPageAge -->
                     <th class="Age $QData{"CSS"}">
-                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Age;OrderBy=$LQData{"OrderBy"}">$Text{"Age"}</a>
+                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Age;OrderBy=$LQData{"OrderBy"}">$Text{"Age"}</a>
                     </th>
 <!-- dtl:block:OverviewNavBarPageAge -->
 <!-- dtl:block:OverviewNavBarPageEscalationTime -->
                     <th class="EscalationTime $QData{"CSS"}">
-                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=EscalationTime;OrderBy=$LQData{"OrderBy"}">$Text{"Escalation in"}</a>
+                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=EscalationTime;OrderBy=$LQData{"OrderBy"}">$Text{"Escalation in"}</a>
                     </th>
 <!-- dtl:block:OverviewNavBarPageEscalationTime -->
 <!-- dtl:block:OverviewNavBarPageLastCustomerSubject -->
@@ -80,22 +78,22 @@
 <!-- dtl:block:OverviewNavBarPageTitle -->
 <!-- dtl:block:OverviewNavBarPageState -->
                     <th class="State $QData{"CSS"}">
-                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=State;OrderBy=$LQData{"OrderBy"}">$Text{"State"}</a>
+                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=State;OrderBy=$LQData{"OrderBy"}">$Text{"State"}</a>
                     </th>
 <!-- dtl:block:OverviewNavBarPageState -->
 <!-- dtl:block:OverviewNavBarPageLock -->
                     <th class="Lock $QData{"CSS"}">
-                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Lock;OrderBy=$LQData{"OrderBy"}">$Text{"Locked"}</a>
+                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Lock;OrderBy=$LQData{"OrderBy"}">$Text{"Locked"}</a>
                     </th>
 <!-- dtl:block:OverviewNavBarPageLock -->
 <!-- dtl:block:OverviewNavBarPageQueue -->
                     <th class="Queue $QData{"CSS"}">
-                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Queue;OrderBy=$LQData{"OrderBy"}">$Text{"Queue"}</a>
+                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Queue;OrderBy=$LQData{"OrderBy"}">$Text{"Queue"}</a>
                     </th>
 <!-- dtl:block:OverviewNavBarPageQueue -->
 <!-- dtl:block:OverviewNavBarPageOwner -->
                     <th class="Owner $QData{"CSS"}">
-                    <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Owner;OrderBy=$LQData{"OrderBy"}">$Text{"Owner"}</a>
+                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=Owner;OrderBy=$LQData{"OrderBy"}">$Text{"Owner"}</a>
                     </th>
 <!-- dtl:block:OverviewNavBarPageOwner -->
 <!-- dtl:block:OverviewNavBarPageCustomerID -->
@@ -103,6 +101,41 @@
                         <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=CustomerID;OrderBy=$LQData{"OrderBy"}">$Text{"CustomerID"}</a>
                     </th>
 <!-- dtl:block:OverviewNavBarPageCustomerID -->
+
+<!-- dtl:block:OverviewNavBarPageDynamicField -->
+                    <th class="DynamicField Last $QData{"CSS"}">
+<!-- dtl:block:OverviewNavBarPageDynamicFieldSortable -->
+                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=DynamicField_$LQData{"DynamicFieldName"};OrderBy=$LQData{"OrderBy"}">$Text{"$Data{"Label"}"}</a>
+<!-- dtl:block:OverviewNavBarPageDynamicFieldSortable -->
+<!-- dtl:block:OverviewNavBarPageDynamicFieldNotSortable -->
+                        <span>$Text{"$Data{"Label"}"}</span>
+<!-- dtl:block:OverviewNavBarPageDynamicFieldNotSortable -->
+                    </th>
+<!-- dtl:block:OverviewNavBarPageDynamicField -->
+# example of how to use fixed dynamic field blocks for customizations
+# Note: Field1 and Field2 are the names of the fields and had to be replaced with the actual
+# field names
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field1 -->
+#                    <th class="DynamicField Last $QData{"CSS"}">
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field1_Sortable -->
+#                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=DynamicField_$LQData{"DynamicFieldName"};OrderBy=$LQData{"OrderBy"}">$Text{"$Data{"Label"}"}</a>
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field1_Sortable -->
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field1_NotSortable -->
+#                        <span>$Text{"$Data{"Label"}"}</span>
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field1_NotSortable -->
+#                    </th>
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field1 -->
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field2 -->
+#                    <th class="DynamicField Last $QData{"CSS"}">
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field2_Sortable -->
+#                        <a name="OverviewControl" href="$Env{"Baselink"}Action=$Env{"Action"};$Data{"LinkSort"};SortBy=DynamicField_$LQData{"DynamicFieldName"};OrderBy=$LQData{"OrderBy"}">$Text{"$Data{"Label"}"}</a>
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field2_Sortable -->
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field2_NotSortable -->
+#                        <span>$Text{"$Data{"Label"}"}</span>
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field2_NotSortable -->
+#                    </th>
+#<!-- dtl:block:OverviewNavBarPageDynamicField_Field2 -->
+
                 </tr>
             </thead>
 <!-- dtl:block:TableHeader-->
@@ -117,7 +150,7 @@
 # ---
 <!-- dtl:block:Bulk -->
                     <td class="Checkbox Fixed NonTextContent">
-                        <input class="Checkbox AutocompleteOff" type="checkbox" name="TicketID" value="$QData{"TicketID"}" />
+                        <input class="Checkbox" type="checkbox" name="TicketID" value="$QData{"TicketID"}"  autocomplete="off" />
                     </td>
 <!-- dtl:block:Bulk -->
 <!-- dtl:block:ContentLargeTicketGenericRowMeta -->
@@ -150,10 +183,10 @@
 <!-- dtl:block:RecordTicketTitle -->
                     </td>
                     <td width="8%">
-                        <div title="$Quote{"$Text{"$Data{"State"}"}"}">$Quote{"$Text{"$Data{"State"}"}","30"}</div>
+                        <div title="$Text{"$Data{"State"}"}">$Text{"$Data{"State"}"}</div>
                     </td>
                     <td>
-                        <div title="$Quote{"$Text{"$Data{"Lock"}"}"}">$Quote{"$Text{"$Data{"Lock"}"}","30"}</div>
+                        <div title="$Text{"$Data{"Lock"}"}">$Text{"$Data{"Lock"}"}</div>
                     </td>
                     <td width="10%">
                         <div title="$QData{"Queue"}">$QData{"Queue","30"}</div>
@@ -167,6 +200,46 @@
                         </a>
                         <div title="$QData{"CustomerName"}">$QData{"CustomerName","15"}</div>
                     </td>
+<!-- dtl:block:RecordDynamicField -->
+                    <td>
+                        <div title="$QData{"Title"}">
+<!-- dtl:block:RecordDynamicFieldLink -->
+                            <a href="$Data{"Link"}" class="DynamicFieldLink">$Data{"Value"}</a>
+<!-- dtl:block:RecordDynamicFieldLink -->
+<!-- dtl:block:RecordDynamicFieldPlain -->
+                            $Data{"Value"}
+<!-- dtl:block:RecordDynamicFieldPlain -->
+                        </div>
+                    </td>
+<!-- dtl:block:RecordDynamicField -->
+# example of how to use fixed dynamic field blocks for customizations
+# Note: Field1 and Field2 are the names of the fields and had to be replaced with the actual
+# field names
+#<!-- dtl:block:RecordDynamicField_Field1 -->
+#                    <td>
+#                        <div title="$QData{"Title"}">
+#<!-- dtl:block:RecordDynamicField_Field1_Link -->
+#                            <a href="$Data{"Link"}" class="DynamicFieldLink">$Data{"Value"}</a>
+#<!-- dtl:block:RecordDynamicField_Field1_Link -->
+#<!-- dtl:block:RecordDynamicField_Field1_Plain -->
+#                            $Data{"Value"}
+#<!-- dtl:block:RecordDynamicField_Field1_Plain -->
+#                        </div>
+#                    </td>
+#<!-- dtl:block:RecordDynamicField_Field1 -->
+#<!-- dtl:block:RecordDynamicField_Field2 -->
+#                    <td>
+#                        <div title="$QData{"Title"}">
+#<!-- dtl:block:RecordDynamicField_Field2_Link -->
+#                            <a href="$Data{"Link"}" class="DynamicFieldLink">$Data{"Value"}</a>
+#<!-- dtl:block:RecordDynamicField_Field2_Link -->
+#<!-- dtl:block:RecordDynamicField_Field2_Plain -->
+#                            $Data{"Value"}
+#<!-- dtl:block:RecordDynamicField_Field2_Plain -->
+#                        </div>
+#                    </td>
+#<!-- dtl:block:RecordDynamicField_Field2 -->
+
                 </tr>
 
 <!-- dtl:block:DocumentReadyActionRowAdd -->
@@ -189,8 +262,14 @@
 <script type="text/javascript">//<![CDATA[
     Core.UI.InitTableHead($('#FixedTable thead'), $('#FixedTable tbody'));
     Core.UI.StaticTableControl($('#OverviewControl').add($('#OverviewBody')));
+    Core.UI.InitCheckboxSelection($('table td.Checkbox'));
     $('.MasterAction').bind('click', function (Event) {
-        window.location = $(this).find('.MasterActionLink').attr('href');
+        var $MasterActionLink = $(this).find('.MasterActionLink');
+        // only act if the link was not clicked directly
+        if (Event.target !== $MasterActionLink.get(0)) {
+            window.location = $MasterActionLink.attr('href');
+            return false;
+        }
     });
     $(window).resize(function() {
         Core.UI.AdjustTableHead($('#FixedTable thead'), $('#FixedTable tbody'), 0);
@@ -228,6 +307,10 @@
 <script type="text/javascript">//<![CDATA[
 $('a.AsPopup').bind('click', function (Event) {
     Core.UI.Popup.OpenPopup($(this).attr('href'), 'Action');
+    return false;
+});
+$('a.DynamicFieldLink').bind('click', function (Event) {
+    Core.UI.Popup.OpenPopup($(this).attr('href'), 'DynamicFieldLink');
     return false;
 });
 //]]></script>
