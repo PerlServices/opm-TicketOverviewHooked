@@ -114,6 +114,7 @@ sub new {
     $Self->{ColumnsAvailable} = \@ColumnsAvailable;
 
     {
+
         # loop through all the dynamic fields to get the ones that should be shown
         DYNAMICFIELDNAME:
         for my $DynamicFieldName (@ColumnsEnabled) {
@@ -653,15 +654,15 @@ sub Run {
                 if ( $Param{SortBy} && ( $Param{SortBy} eq $Column ) ) {
                     if ( $Param{OrderBy} && ( $Param{OrderBy} eq 'Up' ) ) {
                         $OrderBy = 'Down';
-                        $CSS .= ' SortDescendingLarge';
+                        $CSS .= ' SortAscendingLarge';
                     }
                     else {
                         $OrderBy = 'Up';
-                        $CSS .= ' SortAscendingLarge';
+                        $CSS .= ' SortDescendingLarge';
                     }
 
                     # add title description
-                    my $TitleDesc = $OrderBy eq 'Down' ? 'sorted descending' : 'sorted ascending';
+                    my $TitleDesc = $OrderBy eq 'Down' ? 'sorted ascending' : 'sorted descending';
                     $TitleDesc = $Self->{LayoutObject}->{LanguageObject}->Get($TitleDesc);
                     $Title .= ', ' . $TitleDesc;
                 }
@@ -835,15 +836,15 @@ sub Run {
                 if ( $Param{SortBy} && ( $Param{SortBy} eq $Column ) ) {
                     if ( $Param{OrderBy} && ( $Param{OrderBy} eq 'Up' ) ) {
                         $OrderBy = 'Down';
-                        $CSS .= ' SortDescendingLarge';
+                        $CSS .= ' SortAscendingLarge';
                     }
                     else {
                         $OrderBy = 'Up';
-                        $CSS .= ' SortAscendingLarge';
+                        $CSS .= ' SortDescendingLarge';
                     }
 
                     # add title description
-                    my $TitleDesc = $OrderBy eq 'Down' ? 'sorted descending' : 'sorted ascending';
+                    my $TitleDesc = $OrderBy eq 'Down' ? 'sorted ascending' : 'sorted descending';
                     $TitleDesc = $Self->{LayoutObject}->{LanguageObject}->Get($TitleDesc);
                     $Title .= ', ' . $TitleDesc;
                 }
@@ -1044,16 +1045,16 @@ sub Run {
                     {
                         if ( $Param{OrderBy} && ( $Param{OrderBy} eq 'Up' ) ) {
                             $OrderBy = 'Down';
-                            $CSS .= ' SortDescendingLarge';
+                            $CSS .= ' SortAscendingLarge';
                         }
                         else {
                             $OrderBy = 'Up';
-                            $CSS .= ' SortAscendingLarge';
+                            $CSS .= ' SortDescendingLarge';
                         }
 
                         # add title description
                         my $TitleDesc
-                            = $OrderBy eq 'Down' ? 'sorted descending' : 'sorted ascending';
+                            = $OrderBy eq 'Down' ? 'sorted ascending' : 'sorted descending';
                         $TitleDesc = $Self->{LayoutObject}->{LanguageObject}->Get($TitleDesc);
                         $Title .= ', ' . $TitleDesc;
                     }
@@ -1485,6 +1486,7 @@ sub Run {
 
             # dynamic fields
             else {
+
                 # cycle trough the activated dynamic fields for this screen
 
                 my $DynamicFieldConfig;
@@ -1597,6 +1599,27 @@ sub Run {
         Data => \%Param,
     );
 
+    # set column filter form, to correctly fill the column filters is necessary to pass each
+    #    overview some information in the AJAX call, for examle the fixed Filters or NavBarFilters
+    #    and also other values like the Queue in AgentTicketQueue, otherwise the filters will be
+    #    filled with default restrictions, resulting in more options than the ones that the
+    #    available tickets should provide, see Bug#9902
+    if ( IsHashRefWithData( $Param{ColumnFilterForm} ) ) {
+        $Self->{LayoutObject}->Block(
+            Name => 'DocumentColumnFilterForm',
+            Data => {},
+        );
+        for my $Element ( sort keys %{ $Param{ColumnFilterForm} } ) {
+            $Self->{LayoutObject}->Block(
+                Name => 'DocumentColumnFilterFormElement',
+                Data => {
+                    ElementName  => $Element,
+                    ElementValue => $Param{ColumnFilterForm}->{$Element},
+                },
+            );
+        }
+    }
+
     # use template
     my $Output = $Self->{LayoutObject}->Output(
         TemplateFile => 'AgentTicketOverviewSmall',
@@ -1656,6 +1679,7 @@ sub _GetColumnValues {
                     );
             }
             else {
+
                 # get PossibleValues
                 $ColumnFilterValues{$HeaderColumn} = $Self->{BackendObject}->PossibleValuesGet(
                     DynamicFieldConfig => $DynamicFieldConfig,
