@@ -1,0 +1,16 @@
+{
+    "name": "TicketOverviewHooked",
+    "version": "3.3.3",
+    "framework": [
+        "3.3.x"
+    ],
+    "vendor": {
+        "name":  "Perl-Services.de",
+        "url": "http://www.perl-services.de"
+    },
+    "license": "GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007",
+    "description" : {
+        "en": "Show rows in ticket overview (small) with different background colors.",
+        "de": "Ermöglicht unterschiedliche Farben für Zeilen in der Ticketübersicht (Small)."
+    }
+}
