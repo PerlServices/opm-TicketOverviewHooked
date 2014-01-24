@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otrs_package version="1.0">
+    <CVS>$Id: TicketOverviewHooked.sopm,v 1.1.1.1 2011/04/15 07:49:58 rb Exp $</CVS>
     <Name>TicketOverviewHooked</Name>
-    <Version>3.3.1</Version>
+    <Version>3.3.3</Version>
     <Framework>3.3.x</Framework>
-    <Vendor>Renee Baecker, Perl-Services.de</Vendor>
-    <URL>http://perl-services.de/</URL>
+    <Vendor>Perl-Services.de</Vendor>
+    <URL>http://www.perl-services.de</URL>
+    <Description Lang="de">Ermöglicht unterschiedliche Farben für Zeilen in der Ticketübersicht (Small).</Description>
+    <Description Lang="en">Show rows in ticket overview (small) with different background colors.</Description>
     <License>GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007</License>
-    <Description Lang="en">Show rows in ticket overview with different background colors.</Description>
-    <Description Lang="de">Ermöglicht unterschiedliche Farben für Zeilen in der Ticketübersicht</Description>
     <Filelist>
-        <File Permission="644" Location="Kernel/Config/Files/TicketOverviewHooked.xml"/>
-        <File Permission="644" Location="Kernel/Output/HTML/TicketOverviewSmall.pm"/>
-        <File Permission="644" Location="Kernel/Output/HTML/Standard/AgentTicketOverviewSmall.dtl"/>
-        <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/Junk.pm"/>
-        <File Permission="644" Location="var/httpd/htdocs/js/PerlServices.TicketOverview.js"/>
-        <File Permission="644" Location="doc/en/TicketOverviewHooked.pod"/>
+        <File Permission="644" Location="Kernel/Config/Files/TicketOverviewHooked.xml" />
+        <File Permission="644" Location="Kernel/Output/HTML/Standard/AgentTicketOverviewSmall.dtl" />
+        <File Permission="644" Location="Kernel/Output/HTML/TicketOverviewSmall.pm" />
+        <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/Junk.pm" />
+        <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/Queues.pm" />
+        <File Permission="644" Location="doc/TicketOverviewHooked.json" />
+        <File Permission="644" Location="doc/en/TicketOverviewHooked.pod" />
+        <File Permission="644" Location="var/httpd/htdocs/js/PerlServices.TicketOverview.js" />
     </Filelist>
 </otrs_package>
