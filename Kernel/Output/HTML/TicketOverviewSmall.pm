@@ -211,6 +211,24 @@ sub new {
         }
     }
 
+# ---
+# PS
+# ---
+    # run hooks
+    my $Hooks = $Self->{ConfigObject}->Get('TicketOverview::Hooks') || {};
+    $Self->{HOOKS} = $Hooks;
+
+    PRIORITY:
+    for my $Priority ( sort keys %{$Hooks} ) {
+
+        my $Module = $Hooks->{$Priority};
+
+        if ( $Self->{MainObject}->Require( $Module ) ) {
+            $Self->{HookObjects}->{$Module} = $Module->new( %{$Self} );
+        }
+    }
+# ---
+
     return $Self;
 }
 
@@ -407,15 +425,15 @@ sub Run {
             # ---
 
             # run hooks
-            my $Hooks = $Self->{ConfigObject}->Get('TicketOverview::Hooks') || {};
+            my $Hooks = $Self->{HOOKS} || {};
 
             PRIORITY:
             for my $Priority ( sort keys %{$Hooks} ) {
 
                 my $Module = $Hooks->{$Priority};
 
-                if ( $Self->{MainObject}->Require( $Module ) ) {
-                    my $Object = $Module->new( %{$Self} );
+                if ( $Self->{HookObjects}->{$Module} ) {
+                    my $Object = $Self->{HookObjects}->{$Module};
                     my $Color  = $Object->Run(
                         %Article,
                     );
