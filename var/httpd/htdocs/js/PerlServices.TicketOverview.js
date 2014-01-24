@@ -32,7 +32,7 @@ PerlServices.TicketOverview = (function (TargetNS) {
         $( 'tr > td' ).each(function(index){
             var parent_elem = $(this).parent();
             var class_list  = parent_elem.attr( 'class' );
-            if ( class_list.match( /Hooked_([A-Fa-z0-9]+)/ ) ) {
+            if ( class_list && class_list.match( /Hooked_([A-Fa-z0-9]+)/ ) ) {
                 $(this).css( 'background-color', '#' + RegExp.$1 );
             }
         });
