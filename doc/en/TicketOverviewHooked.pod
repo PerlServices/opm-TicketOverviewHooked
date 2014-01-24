@@ -1,6 +1,6 @@
 =head1 NAME
 
-TicketOverviewHooked - provide a simple mechnism to colorize rows in small ticket overview
+TicketOverviewHooked - provide a simple mechnism to colorize rows in small ticket overview and in the agents' dashboard
 
 =head1 DESCRIPTION
 
