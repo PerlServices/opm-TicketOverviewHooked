@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otrs_package version="1.0">
-    <CVS>$Id: TicketOverviewHooked.sopm,v 1.1.1.1 2011/04/15 07:49:58 rb Exp $</CVS>
+    <!-- GENERATED WITH OTRS::OPM::Maker::Command::sopm (1.25) -->
     <Name>TicketOverviewHooked</Name>
-    <Version>3.3.4</Version>
-    <Framework>3.3.x</Framework>
+    <Version>4.0.1</Version>
+    <Framework>4.0.x</Framework>
     <Vendor>Perl-Services.de</Vendor>
     <URL>http://www.perl-services.de</URL>
     <Description Lang="de">Ermöglicht unterschiedliche Farben für Zeilen in der Ticketübersicht (Small).</Description>
@@ -12,8 +12,8 @@
     <Filelist>
         <File Permission="644" Location="Kernel/Config/Files/TicketOverviewHooked.xml" />
         <File Permission="644" Location="Kernel/Output/HTML/DashboardTicketGeneric.pm" />
-        <File Permission="644" Location="Kernel/Output/HTML/Standard/AgentDashboardTicketGeneric.dtl" />
-        <File Permission="644" Location="Kernel/Output/HTML/Standard/AgentTicketOverviewSmall.dtl" />
+        <File Permission="644" Location="Kernel/Output/HTML/Standard/AgentDashboardTicketGeneric.tt" />
+        <File Permission="644" Location="Kernel/Output/HTML/Standard/AgentTicketOverviewSmall.tt" />
         <File Permission="644" Location="Kernel/Output/HTML/TicketOverviewSmall.pm" />
         <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/Junk.pm" />
         <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/Queues.pm" />
