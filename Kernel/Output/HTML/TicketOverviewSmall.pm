@@ -1,7 +1,7 @@
 # --
 # Kernel/Output/HTML/TicketOverviewSmall.pm
-# Copyright (C) 2001-2013 OTRS AG, http://otrs.com/
-# Copyright (C) 2010-2013 Perl-Services.de http://perl-services.de/
+# Copyright (C) 2001-2014 OTRS AG, http://otrs.com/
+# Copyright (C) 2011-2014 Perl-Services.de http://perl-services.de/
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -64,36 +64,23 @@ sub new {
         $Self->{StoredFilters} = $StoredFilters;
     }
 
+    # get the configured dyanmic fields from the Small Overview setting as a basis
+    my %DefaultDynamicFields
+        = %{ $Self->{ConfigObject}->Get("Ticket::Frontend::OverviewSmall")->{DynamicField} || {} };
+
+    my %DefaultColumns
+        = map { 'DynamicField_' . $_ => $DefaultDynamicFields{$_} } sort keys %DefaultDynamicFields;
+
+    # take general settings (Frontend::Agent) if not defined for the screen
+    $Self->{Config}->{DefaultColumns} //= $Self->{ConfigObject}->Get('DefaultOverviewColumns');
+
+    # check for default settings specific for this screen, should overide the dynamic fields
+    %DefaultColumns = ( %DefaultColumns, %{ $Self->{Config}->{DefaultColumns} || {} } );
+
     # configure columns
-    my @ColumnsEnabled;
-    my @ColumnsAvailable;
-
-    # take general settings if not defined for the screen
-    if ( !defined $Self->{Config}->{DefaultColumns} ) {
-        $Self->{Config}->{DefaultColumns} = $Self->{ConfigObject}->Get('DefaultOverviewColumns');
-    }
-
-    # check for default settings
-    if (
-        $Self->{Config}->{DefaultColumns}
-        && IsHashRefWithData( $Self->{Config}->{DefaultColumns} )
-        )
-    {
-        @ColumnsAvailable = grep { $Self->{Config}->{DefaultColumns}->{$_} ne '0' }
-            keys %{ $Self->{Config}->{DefaultColumns} };
-        @ColumnsEnabled = grep { $Self->{Config}->{DefaultColumns}->{$_} eq '2' }
-            keys %{ $Self->{Config}->{DefaultColumns} };
-    }
-
-    # get dynamic fields
-    my $DynamicFieldList = $Self->{DynamicFieldObject}->DynamicFieldList(
-        ObjectType => 'Ticket',
-        ResultType => 'HASH',
-    );
-
-    for my $DynamicFieldID ( sort keys %{$DynamicFieldList} ) {
-        push @ColumnsAvailable, 'DynamicField_' . $DynamicFieldList->{$DynamicFieldID};
-    }
+    my @ColumnsAvailable = grep { $DefaultColumns{$_} ne '0' } sort keys %DefaultColumns;
+    my @ColumnsEnabled
+        = grep { $DefaultColumns{$_} eq '2' } sort _DefaultColumnSort keys %DefaultColumns;
 
     # if preference settings are available, take them
     if ( $Preferences{ $Self->{PrefKeyColumns} } ) {
@@ -177,6 +164,16 @@ sub new {
         'SLA'            => 1,
     };
 
+    # remove queue from filters on AgentTicketQueue
+    if ( $Self->{Action} eq 'AgentTicketQueue' ) {
+        delete $Self->{AvailableFilterableColumns}->{Queue};
+    }
+
+    # remove service from filters on AgentTicketService
+    if ( $Self->{Action} eq 'AgentTicketService' ) {
+        delete $Self->{AvailableFilterableColumns}->{Service};
+    }
+
     # get filtrable dynamic fields
     # cycle trough the activated dynamic fields for this screen
     DYNAMICFIELD:
@@ -247,11 +244,12 @@ sub ActionRow {
             $BulkFeature = 1;
         }
         else {
+            GROUP:
             for my $Group (@Groups) {
-                next if !$Self->{LayoutObject}->{"UserIsGroup[$Group]"};
+                next GROUP if !$Self->{LayoutObject}->{"UserIsGroup[$Group]"};
                 if ( $Self->{LayoutObject}->{"UserIsGroup[$Group]"} eq 'Yes' ) {
                     $BulkFeature = 1;
-                    last;
+                    last GROUP;
                 }
             }
         }
@@ -285,7 +283,13 @@ sub ActionRow {
     # add translations for the allocation lists for regular columns
     my $Columns = $Self->{ConfigObject}->Get('DefaultOverviewColumns') || {};
     if ( $Columns && IsHashRefWithData($Columns) ) {
+
+        COLUMN:
         for my $Column ( sort keys %{$Columns} ) {
+
+            # dynamic fields will be translated in the next block
+            next COLUMN if $Column =~ m{ \A DynamicField_ }xms;
+
             $Self->{LayoutObject}->Block(
                 Name => 'ColumnTranslation',
                 Data => {
@@ -376,11 +380,12 @@ sub Run {
             $BulkFeature = 1;
         }
         else {
+            GROUP:
             for my $Group (@Groups) {
-                next if !$Self->{LayoutObject}->{"UserIsGroup[$Group]"};
+                next GROUP if !$Self->{LayoutObject}->{"UserIsGroup[$Group]"};
                 if ( $Self->{LayoutObject}->{"UserIsGroup[$Group]"} eq 'Yes' ) {
                     $BulkFeature = 1;
-                    last;
+                    last GROUP;
                 }
             }
         }
@@ -411,7 +416,7 @@ sub Run {
                     DynamicFields => 0,
                 );
                 if ( !$Article{Title} ) {
-                    $Article{Title} = $Self->{LayoutObject}->{LanguageObject}->Get(
+                    $Article{Title} = $Self->{LayoutObject}->{LanguageObject}->Translate(
                         'This ticket has no title or subject'
                     );
                 }
@@ -441,7 +446,8 @@ sub Run {
 
                     if ( $Color && $Color =~ m{ \A [#]? [a-fA-F0-9]{6} \z }xms ) {
                         $Color =~ s{\A#}{};
-                        $Article{Hooked} = 'Hooked_' . $Color;
+                        $Article{Hooked}     = 'Hooked_' . $Color;
+                        $Article{HookedMain} = 'Hooked';
                         last PRIORITY;
                     }
                 }
@@ -461,22 +467,41 @@ sub Run {
                 Space => ' ',
             );
 
-            # get acl actions
-            $Self->{TicketObject}->TicketAcl(
-                Data          => '-',
+            # get ACL restrictions
+            my %PossibleActions;
+            my $Counter = 0;
+
+            # get all registered Actions
+            if ( ref $Self->{ConfigObject}->Get('Frontend::Module') eq 'HASH' ) {
+
+                my %Actions = %{ $Self->{ConfigObject}->Get('Frontend::Module') };
+
+                # only use those Actions that stats with AgentTicket
+                %PossibleActions
+                    = map { ++$Counter => $_ }
+                    grep { substr( $_, 0, length 'AgentTicket' ) eq 'AgentTicket' }
+                    sort keys %Actions;
+            }
+
+            my $ACL = $Self->{TicketObject}->TicketAcl(
+                Data          => \%PossibleActions,
                 Action        => $Self->{Action},
                 TicketID      => $Article{TicketID},
                 ReturnType    => 'Action',
                 ReturnSubType => '-',
                 UserID        => $Self->{UserID},
             );
-            my %AclAction = $Self->{TicketObject}->TicketAclActionData();
+            my %AclAction = %PossibleActions;
+            if ($ACL) {
+                %AclAction = $Self->{TicketObject}->TicketAclActionData();
+            }
 
             # run ticket pre menu modules
             my @ActionItems;
             if ( ref $Self->{ConfigObject}->Get('Ticket::Frontend::PreMenuModule') eq 'HASH' ) {
                 my %Menus = %{ $Self->{ConfigObject}->Get('Ticket::Frontend::PreMenuModule') };
                 my @Items;
+                MENU:
                 for my $Menu ( sort keys %Menus ) {
 
                     # load module
@@ -493,15 +518,8 @@ sub Run {
                         ACL    => \%AclAction,
                         Config => $Menus{$Menu},
                     );
-                    next if !$Item;
-                    next if ref $Item ne 'HASH';
-                    for my $Key (qw(Name Link Description)) {
-                        next if !$Item->{$Key};
-                        $Item->{$Key} = $Self->{LayoutObject}->Output(
-                            Template => $Item->{$Key},
-                            Data     => \%Article,
-                        );
-                    }
+                    next MENU if !$Item;
+                    next MENU if ref $Item ne 'HASH';
 
                     # add session id if needed
                     if ( !$Self->{LayoutObject}->{SessionIDCookie} && $Item->{Link} ) {
@@ -515,14 +533,28 @@ sub Run {
                     $Item->{ID} = $Item->{Name};
                     $Item->{ID} =~ s/(\s|&|;)//ig;
 
-                    $Self->{LayoutObject}->Block(
-                        Name => $Item->{Block} || 'DocumentMenuItem',
-                        Data => $Item,
-                    );
-                    my $Output = $Self->{LayoutObject}->Output(
-                        TemplateFile => 'AgentTicketOverviewSmall',
-                        Data         => $Item,
-                    );
+                    my $Output;
+                    if ( $Item->{Block} ) {
+                        $Self->{LayoutObject}->Block(
+                            Name => $Item->{Block},
+                            Data => $Item,
+                        );
+                        $Output = $Self->{LayoutObject}->Output(
+                            TemplateFile => 'AgentTicketOverviewSmall',
+                            Data         => $Item,
+                        );
+                    }
+                    else {
+                        $Output = '<li id="'
+                            . $Item->{ID}
+                            . '"><a href="#" title="'
+                            . $Self->{LayoutObject}->{LanguageObject}
+                            ->Translate( $Item->{Description} )
+                            . '">'
+                            . $Self->{LayoutObject}->{LanguageObject}->Translate( $Item->{Name} )
+                            . '</a></li>';
+                    }
+
                     $Output =~ s/\n+//g;
                     $Output =~ s/\s+/ /g;
                     $Output =~ s/<\!--.+?-->//g;
@@ -615,7 +647,7 @@ sub Run {
 
                 # set title description
                 my $TitleDesc = $OrderBy eq 'Down' ? 'sorted descending' : 'sorted ascending';
-                $TitleDesc = $Self->{LayoutObject}->{LanguageObject}->Get($TitleDesc);
+                $TitleDesc = $Self->{LayoutObject}->{LanguageObject}->Translate($TitleDesc);
                 $Title .= ', ' . $TitleDesc;
             }
 
@@ -681,7 +713,7 @@ sub Run {
 
                     # add title description
                     my $TitleDesc = $OrderBy eq 'Down' ? 'sorted ascending' : 'sorted descending';
-                    $TitleDesc = $Self->{LayoutObject}->{LanguageObject}->Get($TitleDesc);
+                    $TitleDesc = $Self->{LayoutObject}->{LanguageObject}->Translate($TitleDesc);
                     $Title .= ', ' . $TitleDesc;
                 }
 
@@ -691,17 +723,19 @@ sub Run {
                 if ( $Column eq 'Title' ) {
 
                     $TranslatedWord
-                        = $Self->{LayoutObject}->{LanguageObject}->Get('From') . ' / ';
+                        = $Self->{LayoutObject}->{LanguageObject}->Translate('From') . ' / ';
 
                     if ( $Self->{SmallViewColumnHeader} eq 'LastCustomerSubject' ) {
-                        $TranslatedWord .= $Self->{LayoutObject}->{LanguageObject}->Get('Subject');
+                        $TranslatedWord
+                            .= $Self->{LayoutObject}->{LanguageObject}->Translate('Subject');
                     }
                     elsif ( $Self->{SmallViewColumnHeader} eq 'TicketTitle' ) {
-                        $TranslatedWord .= $Self->{LayoutObject}->{LanguageObject}->Get('Title');
+                        $TranslatedWord
+                            .= $Self->{LayoutObject}->{LanguageObject}->Translate('Title');
                     }
                 }
                 else {
-                    $TranslatedWord = $Self->{LayoutObject}->{LanguageObject}->Get($Column);
+                    $TranslatedWord = $Self->{LayoutObject}->{LanguageObject}->Translate($Column);
                 }
 
                 my $FilterTitle     = $Column;
@@ -717,7 +751,8 @@ sub Run {
                     $CSS .= ' FilterActive';
                     $FilterTitleDesc = 'filter active';
                 }
-                $FilterTitleDesc = $Self->{LayoutObject}->{LanguageObject}->Get($FilterTitleDesc);
+                $FilterTitleDesc
+                    = $Self->{LayoutObject}->{LanguageObject}->Translate($FilterTitleDesc);
                 $FilterTitle .= ', ' . $FilterTitleDesc;
 
                 $Self->{LayoutObject}->Block(
@@ -863,30 +898,34 @@ sub Run {
 
                     # add title description
                     my $TitleDesc = $OrderBy eq 'Down' ? 'sorted ascending' : 'sorted descending';
-                    $TitleDesc = $Self->{LayoutObject}->{LanguageObject}->Get($TitleDesc);
+                    $TitleDesc = $Self->{LayoutObject}->{LanguageObject}->Translate($TitleDesc);
                     $Title .= ', ' . $TitleDesc;
                 }
 
                 # translate the column name to write it in the current language
                 my $TranslatedWord;
                 if ( $Column eq 'EscalationTime' ) {
-                    $TranslatedWord = $Self->{LayoutObject}->{LanguageObject}->Get('Service Time');
+                    $TranslatedWord
+                        = $Self->{LayoutObject}->{LanguageObject}->Translate('Service Time');
                 }
                 elsif ( $Column eq 'EscalationResponseTime' ) {
                     $TranslatedWord
-                        = $Self->{LayoutObject}->{LanguageObject}->Get('First Response Time');
+                        = $Self->{LayoutObject}->{LanguageObject}->Translate('First Response Time');
                 }
                 elsif ( $Column eq 'EscalationSolutionTime' ) {
-                    $TranslatedWord = $Self->{LayoutObject}->{LanguageObject}->Get('Solution Time');
+                    $TranslatedWord
+                        = $Self->{LayoutObject}->{LanguageObject}->Translate('Solution Time');
                 }
                 elsif ( $Column eq 'EscalationUpdateTime' ) {
-                    $TranslatedWord = $Self->{LayoutObject}->{LanguageObject}->Get('Update Time');
+                    $TranslatedWord
+                        = $Self->{LayoutObject}->{LanguageObject}->Translate('Update Time');
                 }
                 elsif ( $Column eq 'PendingTime' ) {
-                    $TranslatedWord = $Self->{LayoutObject}->{LanguageObject}->Get('Pending till');
+                    $TranslatedWord
+                        = $Self->{LayoutObject}->{LanguageObject}->Translate('Pending till');
                 }
                 else {
-                    $TranslatedWord = $Self->{LayoutObject}->{LanguageObject}->Get($Column);
+                    $TranslatedWord = $Self->{LayoutObject}->{LanguageObject}->Translate($Column);
                 }
 
                 my $FilterTitle     = $Column;
@@ -895,7 +934,8 @@ sub Run {
                     $CSS .= ' FilterActive';
                     $FilterTitleDesc = 'filter active';
                 }
-                $FilterTitleDesc = $Self->{LayoutObject}->{LanguageObject}->Get($FilterTitleDesc);
+                $FilterTitleDesc
+                    = $Self->{LayoutObject}->{LanguageObject}->Translate($FilterTitleDesc);
                 $FilterTitle .= ', ' . $FilterTitleDesc;
 
                 $Self->{LayoutObject}->Block(
@@ -1054,7 +1094,7 @@ sub Run {
                 );
 
                 if ($IsSortable) {
-                    my $CSS = '';
+                    my $CSS = 'DynamicField_' . $DynamicFieldConfig->{Name};
                     my $OrderBy;
                     if (
                         $Param{SortBy}
@@ -1073,7 +1113,7 @@ sub Run {
                         # add title description
                         my $TitleDesc
                             = $OrderBy eq 'Down' ? 'sorted ascending' : 'sorted descending';
-                        $TitleDesc = $Self->{LayoutObject}->{LanguageObject}->Get($TitleDesc);
+                        $TitleDesc = $Self->{LayoutObject}->{LanguageObject}->Translate($TitleDesc);
                         $Title .= ', ' . $TitleDesc;
                     }
 
@@ -1083,7 +1123,7 @@ sub Run {
                         $FilterTitleDesc = 'filter active';
                     }
                     $FilterTitleDesc
-                        = $Self->{LayoutObject}->{LanguageObject}->Get($FilterTitleDesc);
+                        = $Self->{LayoutObject}->{LanguageObject}->Translate($FilterTitleDesc);
                     $FilterTitle .= ', ' . $FilterTitleDesc;
 
                     $Self->{LayoutObject}->Block(
@@ -1185,13 +1225,16 @@ sub Run {
                 }
                 else {
 
+                    my $DynamicFieldName = 'DynamicField_' . $DynamicFieldConfig->{Name};
+                    my $CSS              = $DynamicFieldName;
+
                     $Self->{LayoutObject}->Block(
                         Name => 'OverviewNavBarPageDynamicField',
                         Data => {
                             %Param,
+                            CSS => $CSS,
                         },
                     );
-                    my $DynamicFieldName = 'DynamicField_' . $DynamicFieldConfig->{Name};
 
                     if ( $Self->{ValidFilterableColumns}->{$DynamicFieldName} ) {
 
@@ -1476,7 +1519,7 @@ sub Run {
                     $BlockType = 'Translatable';
                     $DataValue = $Article{$TicketColumn} || $UserInfo{$TicketColumn};
                 }
-                elsif ( $TicketColumn eq 'Created' ) {
+                elsif ( $TicketColumn eq 'Created' || $TicketColumn eq 'Changed' ) {
                     $BlockType = 'Time';
                     $DataValue = $Article{$TicketColumn} || $UserInfo{$TicketColumn};
                 }
@@ -1597,15 +1640,11 @@ sub Run {
         # add action items as js
         if ( $Article{ActionItems} ) {
 
-            my $JSON = $Self->{LayoutObject}->JSONEncode(
-                Data => $Article{ActionItems},
-            );
-
             $Self->{LayoutObject}->Block(
                 Name => 'DocumentReadyActionRowAdd',
                 Data => {
                     TicketID => $Article{TicketID},
-                    Data     => $JSON,
+                    Data     => $Article{ActionItems},
                 },
             );
         }
@@ -1703,7 +1742,7 @@ sub _GetColumnValues {
                     DynamicFieldConfig => $DynamicFieldConfig,
                 );
             }
-            last;
+            last DYNAMICFIELD;
         }
     }
 
@@ -1717,7 +1756,7 @@ sub _InitialColumnFilter {
     return if !$Self->{ValidFilterableColumns}->{ $Param{ColumnName} };
 
     my $Label = $Param{Label} || $Param{ColumnName};
-    $Label = $Self->{LayoutObject}->{LanguageObject}->Get($Label);
+    $Label = $Self->{LayoutObject}->{LanguageObject}->Translate($Label);
 
     # set fixed values
     my $Data = [
@@ -1851,7 +1890,7 @@ sub _ColumnFilterJSON {
 
     my $Label = $Param{Label};
     $Label =~ s{ \A DynamicField_ }{}gxms;
-    $Label = $Self->{LayoutObject}->{LanguageObject}->Get($Label);
+    $Label = $Self->{LayoutObject}->{LanguageObject}->Translate($Label);
 
     # set fixed values
     my $Data = [
@@ -1899,6 +1938,7 @@ sub _ColumnFilterJSON {
                 Data         => $Data,
                 Class        => 'ColumnFilter',
                 Sort         => 'AlphanumericKey',
+                TreeView     => 1,
                 SelectedID   => $Param{SelectedValue},
                 Translation  => $TranslationOption,
                 AutoComplete => 'off',
@@ -1907,6 +1947,52 @@ sub _ColumnFilterJSON {
     );
 
     return $JSON;
+}
+
+sub _DefaultColumnSort {
+
+    my %DefaultColumns = (
+        TicketNumber           => 100,
+        Age                    => 110,
+        Changed                => 111,
+        PendingTime            => 112,
+        EscalationTime         => 113,
+        EscalationSolutionTime => 114,
+        EscalationResponseTime => 115,
+        EscalationUpdateTime   => 116,
+        Title                  => 120,
+        State                  => 130,
+        Lock                   => 140,
+        Queue                  => 150,
+        Owner                  => 160,
+        Responsible            => 161,
+        CustomerID             => 170,
+        CustomerName           => 171,
+        CustomerUserID         => 172,
+        Type                   => 180,
+        Service                => 191,
+        SLA                    => 192,
+        Priority               => 193,
+    );
+
+    # dynamic fields can not be on the DefaultColumns sorting hash
+    # when comparing 2 dynamic fields sorting must be alphabetical
+    if ( !$DefaultColumns{$a} && !$DefaultColumns{$b} ) {
+        return $a cmp $b;
+    }
+
+    # when a dynamic field is compared to a ticket attribute it must be higher
+    elsif ( !$DefaultColumns{$a} ) {
+        return 1;
+    }
+
+    # when a ticket attribute is compared to a dynamic field it must be lower
+    elsif ( !$DefaultColumns{$b} ) {
+        return -1;
+    }
+
+    # otherwise do a numerical comparison with the ticket attributes
+    return $DefaultColumns{$a} <=> $DefaultColumns{$b};
 }
 
 1;

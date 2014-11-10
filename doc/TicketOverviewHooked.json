@@ -1,8 +1,8 @@
 {
     "name": "TicketOverviewHooked",
-    "version": "3.3.4",
+    "version": "4.0.1",
     "framework": [
-        "3.3.x"
+        "4.0.x"
     ],
     "vendor": {
         "name":  "Perl-Services.de",
