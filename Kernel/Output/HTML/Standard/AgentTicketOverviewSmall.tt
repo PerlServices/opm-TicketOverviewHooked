@@ -30,6 +30,11 @@
 //]]></script>
 [% END %]
 <div id="OverviewBody" class="Overview TicketList">
+# ---
+# PS
+# ---
+<script type="text/javascript" src="[% Config("Frontend::JavaScriptPath") %]PerlServices.TicketOverview.js"></script>
+# ---
 [% RenderBlockStart("NoTicketFound") %]
     <div id="EmptyMessageSmall">
         [% Translate("No ticket data found.") | html %]
@@ -596,7 +601,6 @@ $('.ColumnFilter').bind('change', function (Event) {
 # ---
 # PS
 # ---
-<script type="text/javascript" src="[% Config("Frontend::JavaScriptPath") %]PerlServices.TicketOverview.js"></script>
 [% WRAPPER JSOnDocumentComplete %]
 <script type="text/javascript">//<![CDATA[
     PerlServices.TicketOverview.ColorizeRows();
