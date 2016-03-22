@@ -1,7 +1,6 @@
 # --
-# AgentDashboardTicketGeneric.tt - provides HTML for global dashboard
-# Copyright (C) 2001-2014 OTRS AG, http://otrs.com/
-# Changes Copyright (C) 2011-2014 Perl-Services.de, http://perl-services.de
+# Copyright (C) 2001-2016 OTRS AG, http://otrs.com/
+# Changes Copyright (C) 2011-2016 Perl-Services.de, http://perl-services.de
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -9,22 +8,26 @@
 # --
 
 [% RenderBlockStart("ContentLargeTicketGenericFilter") %]
-<ul class="Tab Actions">
-    <li class="[% Data.item("Locked::Selected") | html %]"><a href="#" id="Dashboard[% Data.Name | html %]Locked" data-filter="Locked">[% Translate("My locked tickets") | html %] ([% Data.Locked | html %])</a></li>
+<div class="DashboardActions">
+    <ul class="Tab Actions">
+[% RenderBlockStart("ContentLargeTicketGenericFilterLocked") %]
+        <li class="[% Data.item("Locked::Selected") | html %]"><a href="#" id="Dashboard[% Data.Name | html %]Locked" data-filter="Locked">[% Translate("My locked tickets") | html %] ([% Data.Locked | html %])</a></li>
+[% RenderBlockEnd("ContentLargeTicketGenericFilterLocked") %]
 [% RenderBlockStart("ContentLargeTicketGenericFilterWatcher") %]
-    <li class="[% Data.item("Watcher::Selected") | html %]"><a href="#" id="Dashboard[% Data.Name | html %]Watcher" data-filter="Watcher">[% Translate("My watched tickets") | html %] ([% Data.Watcher | html %])</a></li>
+        <li class="[% Data.item("Watcher::Selected") | html %]"><a href="#" id="Dashboard[% Data.Name | html %]Watcher" data-filter="Watcher">[% Translate("My watched tickets") | html %] ([% Data.Watcher | html %])</a></li>
 [% RenderBlockEnd("ContentLargeTicketGenericFilterWatcher") %]
 [% RenderBlockStart("ContentLargeTicketGenericFilterResponsible") %]
-    <li class="[% Data.item("Responsible::Selected") | html %]"><a href="#" id="Dashboard[% Data.Name | html %]Responsible" data-filter="Responsible">[% Translate("My responsibilities") | html %] ([% Data.Responsible | html %])</a></li>
+        <li class="[% Data.item("Responsible::Selected") | html %]"><a href="#" id="Dashboard[% Data.Name | html %]Responsible" data-filter="Responsible">[% Translate("My responsibilities") | html %] ([% Data.Responsible | html %])</a></li>
 [% RenderBlockEnd("ContentLargeTicketGenericFilterResponsible") %]
 [% RenderBlockStart("ContentLargeTicketGenericFilterMyQueues") %]
-    <li class="[% Data.item("MyQueues::Selected") | html %]"><a href="#" id="Dashboard[% Data.Name | html %]MyQueues" data-filter="MyQueues">[% Translate("Tickets in My Queues") | html %] ([% Data.MyQueues | html %])</a></li>
+        <li class="[% Data.item("MyQueues::Selected") | html %]"><a href="#" id="Dashboard[% Data.Name | html %]MyQueues" data-filter="MyQueues">[% Translate("Tickets in My Queues") | html %] ([% Data.MyQueues | html %])</a></li>
 [% RenderBlockEnd("ContentLargeTicketGenericFilterMyQueues") %]
 [% RenderBlockStart("ContentLargeTicketGenericFilterMyServices") %]
-    <li class="[% Data.item("MyServices::Selected") | html %]"><a href="#" id="Dashboard[% Data.Name | html %]MyServices" data-filter="MyServices">[% Translate("Tickets in My Services") | html %] ([% Data.MyServices | html %])</a></li>
+        <li class="[% Data.item("MyServices::Selected") | html %]"><a href="#" id="Dashboard[% Data.Name | html %]MyServices" data-filter="MyServices">[% Translate("Tickets in My Services") | html %] ([% Data.MyServices | html %])</a></li>
 [% RenderBlockEnd("ContentLargeTicketGenericFilterMyServices") %]
-    <li class="[% Data.item("All::Selected") | html %] Last"><a href="#" id="Dashboard[% Data.Name | html %]All" data-filter="All">[% Translate("All tickets") | html %] ([% Data.All | html %])</a></li>
-</ul>
+        <li class="[% Data.item("All::Selected") | html %] Last"><a href="#" id="Dashboard[% Data.Name | html %]All" data-filter="All">[% Translate("All tickets") | html %] ([% Data.All | html %])</a></li>
+    </ul>
+</div>
 [% RenderBlockStart("ContentLargeTicketGenericFilterNavBar") %]
 <span class="Pagination">
     [% Data.SiteNavBar %]
@@ -71,7 +74,6 @@
 
         $('#Dashboard[% Data.Name | html %]-box').addClass('Loading');
         Core.AJAX.ContentUpdate($('#Dashboard[% Data.Name | html %]'), '[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Element;Name=[% Data.Name | html %];Filter=' + Filter + ';' + LinkPage + ';CustomerID=' + CustomerID + ';SortBy=[% Data.HeaderColumnName | html %];OrderBy=[% Data.OrderBy | html %]', function () {
-            Core.UI.Table.InitCSSPseudoClasses($('#Dashboard[% Data.Name | html %]'));
             $('#Dashboard[% Data.Name | html %]-box').removeClass('Loading');
         });
         Event.preventDefault();
@@ -115,7 +117,6 @@
 
         $('#Dashboard[% Data.Name | html %]-box').addClass('Loading');
         Core.AJAX.ContentUpdate($('#Dashboard[% Data.Name | html %]'), '[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Element;Name=[% Data.Name | html %];Filter=' + Filter + ';' + LinkPage + ';CustomerID=' + CustomerID + ';SortBy=TicketNumber;OrderBy=[% Data.OrderBy | html %]', function () {
-            Core.UI.Table.InitCSSPseudoClasses($('#Dashboard[% Data.Name | html %]'));
             $('#Dashboard[% Data.Name | html %]-box').removeClass('Loading');
         });
         Event.preventDefault();
@@ -159,6 +160,7 @@ Core.Agent.Dashboard.InitUserAutocomplete( $(".UserAutoComplete") );
 //]]></script>
 [% END %]
 [% RenderBlockEnd("ContentLargeTicketGenericHeaderColumnFilterLinkUserSearch") %]
+                            <a href="#" class="DeleteFilter Hidden"><i class="fa fa-trash-o"></i></a>
                         </div>
                     </div>
 
@@ -198,7 +200,6 @@ Core.Agent.Dashboard.InitUserAutocomplete( $(".UserAutoComplete") );
 
         $('#Dashboard[% Data.Name | html %]-box').addClass('Loading');
         Core.AJAX.ContentUpdate($('#Dashboard[% Data.Name | html %]'), '[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Element;Name=[% Data.Name | html %];Filter=' + Filter + ';CustomerID=' + CustomerID + ';SortBy=[% Data.SortBy | html %];OrderBy=[% Data.OrderBy | html %];' + LinkPage, function () {
-            Core.UI.Table.InitCSSPseudoClasses($('#Dashboard[% Data.Name | html %]'));
             $('#Dashboard[% Data.Name | html %]-box').removeClass('Loading');
         });
         return false;
@@ -237,7 +238,6 @@ Core.Agent.Dashboard.InitUserAutocomplete( $(".UserAutoComplete") );
 
         $('#Dashboard[% Data.Name | html %]-box').addClass('Loading');
         Core.AJAX.ContentUpdate($('#Dashboard[% Data.Name | html %]'), '[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Element;Name=[% Data.Name | html %];Filter=' + Filter + ';CustomerID=' + CustomerID + ';SortBy=[% Data.HeaderColumnName | html %];OrderBy=[% Data.OrderBy | html %];' + LinkPage, function () {
-            Core.UI.Table.InitCSSPseudoClasses($('#Dashboard[% Data.Name | html %]'));
             $('#Dashboard[% Data.Name | html %]-box').removeClass('Loading');
         });
         Event.preventDefault();
@@ -284,7 +284,6 @@ Core.Agent.Dashboard.InitUserAutocomplete( $(".UserAutoComplete") );
 
         $('#Dashboard[% Data.Name | html %]-box').addClass('Loading');
         Core.AJAX.ContentUpdate($('#Dashboard[% Data.Name | html %]'), '[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Element;Name=[% Data.Name | html %];Filter=' + Filter + ';CustomerID=' + CustomerID +';SortBy=[% Data.HeaderColumnName | html %];OrderBy=[% Data.OrderBy | html %];' + LinkPage, function () {
-            Core.UI.Table.InitCSSPseudoClasses($('#Dashboard[% Data.Name | html %]'));
             $('#Dashboard[% Data.Name | html %]-box').removeClass('Loading');
         });
         Event.preventDefault();
@@ -313,6 +312,7 @@ Core.Agent.Dashboard.InitCustomerUserAutocomplete( $(".CustomerUserAutoComplete"
 //]]></script>
 [% END %]
 [% RenderBlockEnd("ContentLargeTicketGenericHeaderColumnFilterLinkCustomerUserSearch") %]
+                            <a href="#" class="DeleteFilter Hidden"><i class="fa fa-trash-o"></i></a>
                         </div>
                     </div>
 
@@ -351,7 +351,6 @@ Core.Agent.Dashboard.InitCustomerUserAutocomplete( $(".CustomerUserAutoComplete"
 
         $('#Dashboard[% Data.Name | html %]-box').addClass('Loading');
         Core.AJAX.ContentUpdate($('#Dashboard[% Data.Name | html %]'), '[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Element;Name=[% Data.Name | html %];Filter=' + Filter + ';CustomerID=' + CustomerID + ';SortBy=[% Data.SortBy | html %];OrderBy=[% Data.OrderBy | html %];' + LinkPage, function () {
-            Core.UI.Table.InitCSSPseudoClasses($('#Dashboard[% Data.Name | html %]'));
             $('#Dashboard[% Data.Name | html %]-box').removeClass('Loading');
         });
         return false;
@@ -377,6 +376,7 @@ Core.Agent.Dashboard.InitCustomerUserAutocomplete( $(".CustomerUserAutoComplete"
 $('.DashboardHeader').off('click').on('click', '.ColumnSettingsTrigger', function() {
 
     var $TriggerObj = $(this),
+        $ColumnSettingsContainer = $TriggerObj.next('.ColumnSettingsContainer'),
         FilterName;
 
     if ($TriggerObj.hasClass('Active')) {
@@ -399,16 +399,32 @@ $('.DashboardHeader').off('click').on('click', '.ColumnSettingsTrigger', functio
             });
 
         // show THIS settings widget
-        $TriggerObj
-            .next('.ColumnSettingsContainer')
+        $ColumnSettingsContainer
             .find('.ColumnSettingsBox')
             .fadeIn('fast', function() {
 
                 $TriggerObj.addClass('Active');
 
+                // only show and use the delete filter icon in case of autocomplete fields
+                // because in regular dropdowns we have a different way to delete the filter
+                if ($TriggerObj.closest('th').hasClass('FilterActive') && $ColumnSettingsContainer.find('select.ColumnFilter').hasClass('Hidden')) {
+                    $ColumnSettingsContainer
+                        .find('.DeleteFilter')
+                        .removeClass('Hidden')
+                        .off()
+                        .on('click', function() {
+                            $(this)
+                                .closest('.ColumnSettingsContainer')
+                                .find('select')
+                                .val('DeleteFilter')
+                                .trigger('change');
+
+                            return false;
+                        });
+                }
+
                 // refresh filter dropdown
-                FilterName = $TriggerObj
-                    .next('.ColumnSettingsContainer')
+                FilterName = $ColumnSettingsContainer
                     .find('select')
                     .attr('name');
 
@@ -416,35 +432,19 @@ $('.DashboardHeader').off('click').on('click', '.ColumnSettingsTrigger', functio
 
                     if (!$TriggerObj.parent().find('.SelectedValue').length) {
                         Core.AJAX.FormUpdate($TriggerObj.parents('form'), 'AJAXFilterUpdate', FilterName, [ FilterName ], function() {
-                            var AutoCompleteValue = $TriggerObj
-                                    .next('.ColumnSettingsContainer')
+                            var AutoCompleteValue = $ColumnSettingsContainer
                                     .find('select')
                                     .val(),
-                                AutoCompleteText  = $TriggerObj
-                                    .next('.ColumnSettingsContainer')
+                                AutoCompleteText  = $ColumnSettingsContainer
                                     .find('select')
                                     .find('option:selected')
                                     .text();
 
                             if (AutoCompleteValue !== 'DeleteFilter') {
 
-                                $TriggerObj
-                                    .next('.ColumnSettingsContainer')
+                                $ColumnSettingsContainer
                                     .find('select')
-                                    .after('<span class="SelectedValue Hidden"><a href="#">x</a><span title="' + AutoCompleteText + ' (' + AutoCompleteValue + ')">' + AutoCompleteText + ' (' + AutoCompleteValue + ')</span></span>')
-                                    .parent()
-                                    .find('.SelectedValue')
-                                    .find('a')
-                                    .off()
-                                    .on('click', function() {
-                                        $(this)
-                                            .closest('.ColumnSettingsContainer')
-                                            .find('select')
-                                            .val('DeleteFilter')
-                                            .trigger('change');
-
-                                        return false;
-                                    });
+                                    .after('<span class="SelectedValue Hidden"><span title="' + AutoCompleteText + ' (' + AutoCompleteValue + ')">' + AutoCompleteText + ' (' + AutoCompleteValue + ')</span></span>');
                             }
                         });
                     }
@@ -594,7 +594,6 @@ if (Core.Config.Get('RefreshSeconds_[% Data.NameHTML | html %]')) {
 
         $('#Dashboard[% Data.Name | html %]-box').addClass('Loading');
         Core.AJAX.ContentUpdate($('#Dashboard[% Data.Name | html %]'), '[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Element;Name=[% Data.Name | html %];Filter=' + Filter + ';CustomerID=[% Data.CustomerID | html %];SortBy=' + SortBy + ';OrderBy=' + OrderBy, function () {
-            Core.UI.Table.InitCSSPseudoClasses($('#Dashboard[% Data.Name | html %]'));
             $('#Dashboard[% Data.Name | html %]-box').removeClass('Loading');
         });
         clearTimeout(Core.Config.Get('Timer_[% Data.NameHTML | html %]'));
@@ -618,7 +617,6 @@ if (!$('#Dashboard[% Data.Name | html %]-box').find('.ActionMenu').find('.Remove
             var Filter = $('#Dashboard[% Data.Name | html %]-box').find('.Tab.Actions li.Selected a').attr('data-filter');
             $('#Dashboard[% Data.Name | html %]-box').addClass('Loading');
             Core.AJAX.ContentUpdate($('#Dashboard[% Data.Name | html %]'), '[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Element;Name=[% Data.Name | html %];Filter=' + Filter + ';CustomerID=[% Data.CustomerID | html %];RemoveFilters=1', function () {
-                Core.UI.Table.InitCSSPseudoClasses($('#Dashboard[% Data.Name | html %]'));
                 $('#Dashboard[% Data.Name | html %]-box').removeClass('Loading');
             });
             return false;
@@ -659,7 +657,6 @@ $('#Dashboard[% Data.Name | html %]-box').find('.RemoveFilters').remove();
 
         $('#Dashboard[% Data.Name | html %]-box').addClass('Loading');
         Core.AJAX.ContentUpdate($('#Dashboard[% Data.Name | html %]'), '[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Element;Name=[% Data.Name | html %];Filter=' + Filter + ';CustomerID=' + encodeURIComponent(CustomerID), function () {
-            Core.UI.Table.InitCSSPseudoClasses($('#Dashboard[% Data.Name | html %]'));
             $('#Dashboard[% Data.Name | html %]-box').removeClass('Loading');
         });
         return false;

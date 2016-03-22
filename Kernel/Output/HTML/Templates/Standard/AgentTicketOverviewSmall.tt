@@ -1,7 +1,6 @@
 # --
-# AgentTicketOverviewSmall.tt - html for ticket overview table
-# Copyright (C) 2001-2014 OTRS AG, http://otrs.com/
-# Copyright (C) 2011-2014 Perl-Services.de http://perl-services.de/
+# Copyright (C) 2001-2016 OTRS AG, http://otrs.com/
+# Copyright (C) 2011-2016 Perl-Services.de http://perl-services.de/
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -27,8 +26,41 @@
 [% WRAPPER JSOnDocumentComplete %]
 <script type="text/javascript">//<![CDATA[
     Core.UI.ActionRow.Init();
+
+    $('a.AsPopup').bind('click', function (Event) {
+        Core.UI.Popup.OpenPopup($(this).attr('href'), 'Action');
+        return false;
+    });
+
+    $('.ColumnFilter').bind('change', function (Event) {
+        var URL, ColumnFilter, NewColumnFilterStrg, MyRegEx, SessionInformation;
+
+        // define variables
+        URL = Core.Config.Get('Baselink') + 'Action=' + '[% Env("Action") %]' + ';[% Data.LinkPage %]';
+        SessionInformation = Core.App.GetSessionInformation();
+        $.each(SessionInformation, function (Key, Value) {
+            URL += encodeURIComponent(Key) + '=' + encodeURIComponent(Value) + ';';
+        });
+        ColumnFilter = $(this)[0].name;
+        NewColumnFilterStrg = $(this)[0].name + '=' + $(this).val() + ';';
+        MyRegEx = new  RegExp(ColumnFilter+"=[^;]*;");
+
+        // check for already set parameter and replace
+        if (URL.match(MyRegEx)) {
+            URL = URL.replace(MyRegEx, NewColumnFilterStrg);
+        }
+
+        // otherwise add the new column filter
+        else {
+            URL = URL + NewColumnFilterStrg;
+        }
+
+        // redirect
+        window.location.href =  URL;
+    });
 //]]></script>
 [% END %]
+
 <div id="OverviewBody" class="Overview TicketList">
 # ---
 # PS
@@ -75,7 +107,7 @@
 [% RenderBlockStart("OverviewNavBarPageTicketHeader") %]
 [% RenderBlockStart("OverviewNavBarPageTicketNumber") %]
                     <th class="TicketNumber [% Data.CSS | html %]">
-                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=TicketNumber;OrderBy=[% Data.OrderBy | uri %]" title="[% Data.Title | html %]">[% Config("Ticket::Hook") %]</a>
+                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=TicketNumber;OrderBy=[% Data.OrderBy | uri %]" title="[% Translate(Data.Title) | html %]">[% Config("Ticket::Hook") %]</a>
                     </th>
 [% RenderBlockEnd("OverviewNavBarPageTicketNumber") %]
 [% RenderBlockStart("OverviewNavBarPageColumn") %]
@@ -139,11 +171,11 @@ Core.Agent.TableFilters.InitUserAutocomplete( $(".UserAutoComplete") );
 [% RenderBlockEnd("ContentLargeTicketGenericHeaderColumnFilterLinkUserSearch") %]
                             </div>
                         </div>
-                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=[% Data.ColumnName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Data.Title | html %]">[% Data.ColumnNameTranslated | html %]</a>
+                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=[% Data.ColumnName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Translate(Data.Title) | html %]">[% Data.ColumnNameTranslated | html %]</a>
 [% RenderBlockEnd("OverviewNavBarPageColumnFilterLink") %]
 
 [% RenderBlockStart("OverviewNavBarPageColumnLink") %]
-                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=[% Data.ColumnName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Data.Title | html %]">[% Data.ColumnNameTranslated | html %]</a>
+                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=[% Data.ColumnName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Translate(Data.Title) | html %]">[% Data.ColumnNameTranslated | html %]</a>
 [% RenderBlockEnd("OverviewNavBarPageColumnLink") %]
 
 [% RenderBlockStart("OverviewNavBarPageColumnEmpty") %]
@@ -157,7 +189,7 @@ Core.Agent.TableFilters.InitUserAutocomplete( $(".UserAutoComplete") );
 [% RenderBlockStart("OverviewNavBarPageDynamicField") %]
                     <th class="OverviewHeader [% Data.HeaderColumnName | html %] DynamicField Last [% Data.CSS | html %]">
 [% RenderBlockStart("OverviewNavBarPageDynamicFieldSortable") %]
-                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=DynamicField_[% Data.DynamicFieldName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Data.Title | html %]">[% Translate(Data.Label) | html %]</a>
+                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=DynamicField_[% Data.DynamicFieldName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Translate(Data.Title) | html %]">[% Translate(Data.Label) | html %]</a>
 [% RenderBlockEnd("OverviewNavBarPageDynamicFieldSortable") %]
 [% RenderBlockStart("OverviewNavBarPageDynamicFieldNotSortable") %]
                         <span class="Gray" title="[% Data.Title | html %]">[% Translate(Data.Label) | html %]</span>
@@ -172,7 +204,7 @@ Core.Agent.TableFilters.InitUserAutocomplete( $(".UserAutoComplete") );
                                 [% Data.ColumnFilterStrg %]
                             </div>
                         </div>
-                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=DynamicField_[% Data.DynamicFieldName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Data.Title | html %]">[% Data.Label | html %]</a>
+                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=DynamicField_[% Data.DynamicFieldName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Translate(Data.Title) | html %]">[% Data.Label | html %]</a>
 [% RenderBlockEnd("OverviewNavBarPageDynamicFieldFiltrableSortable") %]
 
 [% RenderBlockStart("OverviewNavBarPageDynamicFieldFiltrableNotSortable") %]
@@ -212,7 +244,7 @@ Core.Agent.TableFilters.InitUserAutocomplete( $(".UserAutoComplete") );
 #                                [% Data.ColumnFilterStrg %]
 #                            </div>
 #                        </div>
-#                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=DynamicField_[% Data.DynamicFieldName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Data.Title | html %]">[% Data.Label | html %]</a>
+#                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=DynamicField_[% Data.DynamicFieldName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Translate(Data.Title) | html %]">[% Data.Label | html %]</a>
 #[% RenderBlockEnd("OverviewNavBarPageDynamicField_Field1_FiltrableSortable") %]
 #[% RenderBlockStart("OverviewNavBarPageDynamicField_Field1_FiltrableNotSortable") %]
 #                        <a href="#" class="ColumnSettingsTrigger" title="[% Data.FilterTitle | html %]">
@@ -244,7 +276,7 @@ Core.Agent.TableFilters.InitUserAutocomplete( $(".UserAutoComplete") );
 #                                [% Data.ColumnFilterStrg %]
 #                            </div>
 #                        </div>
-#                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=DynamicField_[% Data.DynamicFieldName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Data.Title | html %]">[% Data.Label | html %]</a>
+#                        <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];[% Data.LinkSort %];SortBy=DynamicField_[% Data.DynamicFieldName | uri %];OrderBy=[% Data.OrderBy | uri %]" title="[% Translate(Data.Title) | html %]">[% Data.Label | html %]</a>
 #[% RenderBlockEnd("OverviewNavBarPageDynamicField_Field2_FiltrableSortable") %]
 #[% RenderBlockStart("OverviewNavBarPageDynamicField_Field2_FiltrableNotSortable") %]
 #                        <a href="#" class="ColumnSettingsTrigger" title="[% Data.FilterTitle | html %]">
@@ -414,7 +446,7 @@ $('.OverviewHeader').off('click').on('click', '.ColumnSettingsTrigger', function
 [% RenderBlockStart("RecordLastCustomerSubject") %]
                     <td>
                         <div title="[% Data.From | html %]">[% Data.FromRealname | truncate(30) | html %]</div>
-                        <div title="[% Data.Subject | html %]">[% Data.Subject | html %]</div>
+                        <div title="[% Data.SubjectLong | html %]">[% Data.Subject | html %]</div>
                     </td>
 [% RenderBlockEnd("RecordLastCustomerSubject") %]
 [% RenderBlockStart("RecordTicketTitle") %]
@@ -562,42 +594,6 @@ $('.OverviewHeader').off('click').on('click', '.ColumnSettingsTrigger', function
 [% RenderBlockEnd("DocumentColumnFilterFormElement") %]
 </form>
 [% RenderBlockEnd("DocumentColumnFilterForm") %]
-
-[% WRAPPER JSOnDocumentComplete %]
-<script type="text/javascript">//<![CDATA[
-$('a.AsPopup').bind('click', function (Event) {
-    Core.UI.Popup.OpenPopup($(this).attr('href'), 'Action');
-    return false;
-});
-
-$('.ColumnFilter').bind('change', function (Event) {
-    var URL, ColumnFilter, NewColumnFilterStrg, MyRegEx, SessionInformation;
-
-    // define variables
-    URL = Core.Config.Get('Baselink') + 'Action=' + '[% Env("Action") %]' + ';[% Data.LinkPage %]';
-    SessionInformation = Core.App.GetSessionInformation();
-    $.each(SessionInformation, function (Key, Value) {
-        URL += encodeURIComponent(Key) + '=' + encodeURIComponent(Value) + ';';
-    });
-    ColumnFilter = $(this)[0].name;
-    NewColumnFilterStrg = $(this)[0].name + '=' + $(this).val() + ';';
-    MyRegEx = new  RegExp(ColumnFilter+"=[^;]*;");
-
-    // check for already set parameter and replace
-    if (URL.match(MyRegEx)) {
-        URL = URL.replace(MyRegEx, NewColumnFilterStrg);
-    }
-
-    // otherwise add the new column filter
-    else {
-        URL = URL + NewColumnFilterStrg;
-    }
-
-    // redirect
-    window.location.href =  URL;
-});
-//]]></script>
-[% END %]
 # ---
 # PS
 # ---
