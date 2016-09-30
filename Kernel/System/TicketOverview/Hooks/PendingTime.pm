@@ -69,6 +69,7 @@ sub Run {
     }
 
     return if $Param{UntilTime} >= 0;
+    return if $Param{StateType} !~ m{\Apending};
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
     my $Color        = $ConfigObject->Get('Hook::PendingTime') || 'red';
