@@ -412,7 +412,7 @@ sub Run {
 
     my $ColumnCounter  = 0;
     my %ColumnsEnabled = map{ $_ => $ColumnCounter++ }@{ $Self->{ColumnsEnabled} || {} };
-    my %HookConfigs    = %{ $ConfigObject->Get('TicketOverview::HooksConfig') || {} };
+    my %HookConfigs    = %{ $Self->{ConfigObject}->Get('TicketOverview::HooksConfig') || {} };
 
     my %HookColumns;
 
@@ -421,7 +421,7 @@ sub Run {
         my $ColumnName = $HookConfigs{$Name}->{Column};
 
         next NAME if !$ColumnName;
-        next NAME if !$ColumnEnabled{$ColumnName};
+        next NAME if !$ColumnsEnabled{$ColumnName};
 
         $HookColumns{$Name} = $ColumnsEnabled{$ColumnName};
     }
@@ -467,12 +467,17 @@ sub Run {
             # ---
 
             # run hooks
-            my $Hooks = $Self->{HOOKS} || {};
+            my $Hooks   = $Self->{HOOKS} || {};
+            my $Matched = 0;
 
             PRIORITY:
             for my $Priority ( sort keys %{$Hooks} ) {
 
                 my $Module = $Hooks->{$Priority};
+                my $Name   = (split /::/, $Module)[-1];
+
+                my $Column = $HookColumns{$Name};
+                next PRIORITY if $Matched && !$Column;
 
                 if ( $Self->{HookObjects}->{$Module} ) {
                     my $Object = $Self->{HookObjects}->{$Module};
@@ -483,16 +488,15 @@ sub Run {
                     if ( $Color && $Color =~ m{ \A [#]? [a-fA-F0-9]{6} \z }xms ) {
                         $Color =~ s{\A#}{};
 
-                        my $Column = $HookColumns{$Name};
                         if ( $Column ) {
-                            $Article{HookedColumn} = 'HookedColumn_' . $Column . '_' . $Color;
+                            $Article{HookedColumn} = 'HookedColumn_' . ( $Column + 3 ) . '_' . $Color;
                         }
                         else {
                             $Article{Hooked} = 'Hooked_' . $Color;
+                            $Matched++;
                         }
 
                         $Article{HookedMain} = 'Hooked';
-                        last PRIORITY;
                     }
                 }
             }
