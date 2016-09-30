@@ -426,7 +426,7 @@ sub Run {
 
     my $ColumnCounter  = 0;
     my %ColumnsEnabled = map{ $_ => $ColumnCounter++ }@{ $Self->{ColumnsEnabled} || {} };
-    my %HookConfigs    = %{ $Self->{ConfigObject}->Get('TicketOverview::HooksConfig') || {} };
+    my %HookConfigs    = %{ $ConfigObject->Get('TicketOverview::HooksConfig') || {} };
 
     my %HookColumns;
 
