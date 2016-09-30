@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otrs_config version="1.0" init="Application">
+<otrs_config version="1.0" init="Config">
     <CVS>$Id: TicketOverviewHooked.xml,v 1.1 2011/02/12 22:57:22 reb Exp $</CVS>
     <ConfigItem Name="TicketOverview::Hooks" Required="0" Valid="0">
         <Description Translatable="1">Define the hooks for the ticket overview. As keys the priorities are used - the lower the number the more important. The modules that implements the hooks are used as value.</Description>
@@ -27,6 +27,16 @@
             <Hash>
                 <Item Key="Junk">808080</Item>
                 <Item Key="Misc">00ff00</Item>
+            </Hash>
+        </Setting>
+    </ConfigItem>
+    <ConfigItem Name="TicketOverview::HooksConfig###PendingTime" Required="0" Valid="0">
+        <Description Translatable="1">Config for PendingTime hook.</Description>
+        <Group>Ticket</Group>
+        <SubGroup>TicketOverview</SubGroup>
+        <Setting>
+            <Hash>
+                <Item Key="Column">State</Item>
             </Hash>
         </Setting>
     </ConfigItem>
