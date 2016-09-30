@@ -40,7 +40,20 @@ PerlServices.TicketOverview = (function (TargetNS) {
             var class_list  = row.attr( 'class' );
             if ( class_list.match( /Hooked_([A-Fa-z0-9]+)/ ) ) {
                 var color = RegExp.$1;
-                row.children('td').each( function() {
+                row.children('td').each( function(index, cell) {
+                    $(this).css( 'background-color', '#' + color );
+                });
+            }
+
+            if ( class_list.match( /HookedColumn_([0-9]+)_([A-Fa-z0-9]+)/ ) ) {
+                var color = RegExp.$2;
+                var needed_index = RegExp.$1;
+
+                row.children('td').each( function(index, cell) {
+                    if ( index != needed_index ) {
+                        return;
+                    }
+
                     $(this).css( 'background-color', '#' + color );
                 });
             }
