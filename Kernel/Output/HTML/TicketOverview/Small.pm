@@ -420,6 +420,27 @@ sub Run {
         }
     }
 
+# ---
+# PS
+# ---
+
+    my $ColumnCounter  = 0;
+    my %ColumnsEnabled = map{ $_ => $ColumnCounter++ }@{ $Self->{ColumnsEnabled} || {} };
+    my %HookConfigs    = %{ $ConfigObject->Get('TicketOverview::HooksConfig') || {} };
+
+    my %HookColumns;
+
+    NAME:
+    for my $Name ( sort keys %HookConfigs ) {
+        my $ColumnName = $HookConfigs{$Name}->{Column};
+
+        next NAME if !$ColumnName;
+        next NAME if !$ColumnEnabled{$ColumnName};
+
+        $HookColumns{$Name} = $ColumnsEnabled{$ColumnName};
+    }
+# ---
+
     my $Counter = 0;
     my @ArticleBox;
     for my $TicketID ( @{ $Param{TicketIDs} } ) {
@@ -478,7 +499,15 @@ sub Run {
 
                     if ( $Color && $Color =~ m{ \A [#]? [a-fA-F0-9]{6} \z }xms ) {
                         $Color =~ s{\A#}{};
-                        $Article{Hooked}     = 'Hooked_' . $Color;
+
+                        my $Column = $HookColumns{$Name};
+                        if ( $Column ) {
+                            $Article{HookedColumn} = 'HookedColumn_' . $Column . '_' . $Color;
+                        }
+                        else {
+                            $Article{Hooked} = 'Hooked_' . $Color;
+                        }
+
                         $Article{HookedMain} = 'Hooked';
                         last PRIORITY;
                     }
