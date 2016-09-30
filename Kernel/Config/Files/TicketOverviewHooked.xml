@@ -30,6 +30,14 @@
             </Hash>
         </Setting>
     </ConfigItem>
+    <ConfigItem Name="Hook::PendingTime" Required="0" Valid="1">
+        <Description Translatable="1">Define the background color of tickets with negative reminder time. (It has to be the html colors)</Description>
+        <Group>Ticket</Group>
+        <SubGroup>TicketOverview</SubGroup>
+        <Setting>
+            <String Regex="^[A-Fa-f0-9]{6}$">ff0000</String>
+        </Setting>
+    </ConfigItem>
     <ConfigItem Name="TicketOverview::HooksConfig###PendingTime" Required="0" Valid="0">
         <Description Translatable="1">Config for PendingTime hook.</Description>
         <Group>Ticket</Group>
