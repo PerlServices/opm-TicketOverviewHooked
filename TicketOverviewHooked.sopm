@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otrs_package version="1.0">
-    <!-- GENERATED WITH OTRS::OPM::Maker::Command::sopm (1.29) -->
+    <!-- GENERATED WITH OTRS::OPM::Maker::Command::sopm (1.35) -->
     <Name>TicketOverviewHooked</Name>
-    <Version>4.0.2</Version>
+    <Version>4.0.3</Version>
     <Framework>4.0.x</Framework>
     <Vendor>Perl-Services.de</Vendor>
     <URL>http://www.perl-services.de</URL>
@@ -16,6 +16,7 @@
         <File Permission="644" Location="Kernel/Output/HTML/Standard/AgentTicketOverviewSmall.tt" />
         <File Permission="644" Location="Kernel/Output/HTML/TicketOverviewSmall.pm" />
         <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/Junk.pm" />
+        <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/PendingTime.pm" />
         <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/Queues.pm" />
         <File Permission="644" Location="doc/TicketOverviewHooked.json" />
         <File Permission="644" Location="doc/en/TicketOverviewHooked.pod" />
