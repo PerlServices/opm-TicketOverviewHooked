@@ -57,10 +57,12 @@ Returns a color when the ticket belongs to the Junk-Queue
 sub Run {
     my ( $Self, %Param ) = @_;
 
+    my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
+
     # check needed stuff
     for my $Needed (qw(UntilTime)) {
         if ( !$Param{$Needed} ) {
-            $Self->{LogObject}->Log(
+            $LogObject->Log(
                 Priority => 'error',
                 Message  => "Need $Needed!",
             );
@@ -72,7 +74,7 @@ sub Run {
     return if $Param{StateType} !~ m{\Apending};
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-    my $Color        = $ConfigObject->Get('Hook::PendingTime') || 'red';
+    my $Color        = $ConfigObject->Get('Hook::PendingTime') || 'ff0000';
 
     return $Color;
 }
