@@ -30,8 +30,8 @@ PerlServices.TicketOverview = (function (TargetNS) {
      * @param JsonData - the tickettemplate as jsondata
      * @return nothing
      */
-    TargetNS.ColorizeRows = function () {
-        if ( Counter++ > 0 ) {
+    TargetNS.ColorizeRows = function ( ForceColorize ) {
+        if ( Counter++ > 0 && ( !ForceColorize || ForceColorize != 1 ) ) {
             return;
         }
 

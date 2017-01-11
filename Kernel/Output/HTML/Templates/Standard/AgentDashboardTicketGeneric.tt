@@ -670,6 +670,9 @@ $('#Dashboard' + Core.App.EscapeSelector('[% Data.Name | html %]') + '-box').fin
 [% WRAPPER JSOnDocumentComplete %]
 <script type="text/javascript">//<![CDATA[
     PerlServices.TicketOverview.ColorizeRows();
+    Core.App.Subscribe('Event.AJAX.ContentUpdate.Callback', function() {
+        PerlServices.TicketOverview.ColorizeRows(1);
+    });
 //]]></script>
 [% END %]
 # ---
