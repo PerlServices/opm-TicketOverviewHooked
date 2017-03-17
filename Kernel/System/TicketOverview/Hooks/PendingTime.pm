@@ -59,17 +59,7 @@ sub Run {
 
     my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
 
-    # check needed stuff
-    for my $Needed (qw(UntilTime)) {
-        if ( !$Param{$Needed} ) {
-            $LogObject->Log(
-                Priority => 'error',
-                Message  => "Need $Needed!",
-            );
-            return;
-        }
-    }
-
+    return if !$Param{UntilTime};
     return if $Param{UntilTime} >= 0;
     return if $Param{StateType} !~ m{\Apending};
 
