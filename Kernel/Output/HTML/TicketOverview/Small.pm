@@ -499,8 +499,9 @@ sub Run {
             # ---
 
             # run hooks
-            my $Hooks   = $Self->{HOOKS} || {};
-            my $Matched = 0;
+            my $Hooks    = $Self->{HOOKS} || {};
+            my $Matched  = 0;
+            my $FontSeen = 0;
 
             PRIORITY:
             for my $Priority ( sort keys %{$Hooks} ) {
@@ -517,7 +518,29 @@ sub Run {
                         %Article,
                     );
 
-                    if ( $Color && $Color =~ m{ \A [#]? [a-fA-F0-9]{6} \z }xms ) {
+                    next PRIORITY if !$Color;
+    
+                    if ( ref $Color ) {
+                        my $Hooked = '';
+    
+                        KEY:
+                        for my $Key ( qw/Font Background/ ) {
+                            next KEY if !$Color->{$Key};
+                            next KEY if $Key eq 'Font' && $FontSeen++;
+
+                            my $Suffix     = $Key eq 'Font' ? 'Font' : '';
+                            my $ColorValue = $Color->{$Key};
+                            $ColorValue    =~ s{\A#}{};
+
+                            $Hooked .= sprintf ' Hooked%s_%s', $Suffix, $ColorValue;
+                        }
+    
+                        $Article{Hooked}     = $Hooked;
+                        $Article{HookedMain} = 'Hooked';
+    
+                        last PRIORITY if $Color->{Background};
+                    }
+                    elsif ( $Color =~ m{ \A [#]? [a-fA-F0-9]{6} \z }xms ) {
                         $Color =~ s{\A#}{};
 
                         if ( $Column ) {

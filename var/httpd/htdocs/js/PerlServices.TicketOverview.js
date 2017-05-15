@@ -45,6 +45,13 @@ PerlServices.TicketOverview = (function (TargetNS) {
                 });
             }
 
+            if ( class_list.match( /HookedFont_([A-Fa-z0-9]+)/ ) ) {
+                var color = RegExp.$1;
+                row.children('td').each( function(index, cell) {
+                    $(this).css( 'color', '#' + color );
+                });
+            }
+ 
             if ( class_list.match( /HookedColumn_([0-9]+)_([A-Fa-z0-9]+)/ ) ) {
                 var color = RegExp.$2;
                 var needed_index = RegExp.$1;
