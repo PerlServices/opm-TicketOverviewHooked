@@ -70,4 +70,32 @@
             </Hash>
         </Setting>
     </ConfigItem>
+    <ConfigItem Name="Hook::Generic::Attribute" Required="0" Valid="1">
+        <Description Translatable="1">Define the attribute that is used for the generic hook</Description>
+        <Group>Ticket</Group>
+        <SubGroup>TicketOverview</SubGroup>
+        <Setting>
+            <String Regex="">Lock</String>
+        </Setting>
+    </ConfigItem>
+    <ConfigItem Name="Hook::Generic" Required="0" Valid="1">
+        <Description Translatable="1">Define the background color of tickets based on the generic attribute. (It has to be the html colors)</Description>
+        <Group>Ticket</Group>
+        <SubGroup>TicketOverview</SubGroup>
+        <Setting>
+            <Hash>
+                <Item Key="lock">808080</Item>
+            </Hash>
+        </Setting>
+    </ConfigItem>
+    <ConfigItem Name="Hook::Generic::Font" Required="0" Valid="1">
+        <Description Translatable="1">Define the font color of tickets based on the generic attribute. (It has to be the html colors)</Description>
+        <Group>Ticket</Group>
+        <SubGroup>TicketOverview</SubGroup>
+        <Setting>
+            <Hash>
+                <Item Key="lock">000000</Item>
+            </Hash>
+        </Setting>
+    </ConfigItem>
 </otrs_config>
