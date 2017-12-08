@@ -1,101 +1,91 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otrs_config version="1.0" init="Config">
+<otrs_config version="2.0" init="Config">
     <CVS>$Id: TicketOverviewHooked.xml,v 1.1 2011/02/12 22:57:22 reb Exp $</CVS>
-    <ConfigItem Name="TicketOverview::Hooks" Required="0" Valid="0">
+    <Setting Name="TicketOverview::Hooks" Required="0" Valid="0">
         <Description Translatable="1">Define the hooks for the ticket overview. As keys the priorities are used - the lower the number the more important. The modules that implements the hooks are used as value.</Description>
-        <Group>Ticket</Group>
-        <SubGroup>TicketOverview</SubGroup>
-        <Setting>
+        <Navigation>TicketOverview</Navigation>
+        <Value>
             <Hash>
                 <Item Key="1001">Kernel::System::TicketOverview::Hooks::Queues</Item>
             </Hash>
-        </Setting>
-    </ConfigItem>
-    <ConfigItem Name="Hook::Junk" Required="0" Valid="1">
+        </Value>
+    </Setting>
+    <Setting Name="Hook::Junk" Required="0" Valid="1">
         <Description Translatable="1">Define the background color of junk tickets. (It has to be the html colors)</Description>
-        <Group>Ticket</Group>
-        <SubGroup>TicketOverview</SubGroup>
-        <Setting>
-            <String Regex="^[A-Fa-f0-9]{6}$">cdcdcd</String>
-        </Setting>
-    </ConfigItem>
-    <ConfigItem Name="Hook::Queues" Required="0" Valid="1">
+        <Navigation>TicketOverview</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[A-Fa-f0-9]{6}$">cdcdcd</Item>
+        </Value>
+    </Setting>
+    <Setting Name="Hook::Queues" Required="0" Valid="1">
         <Description Translatable="1">Define the background color of tickets based on queues. (It has to be the html colors)</Description>
-        <Group>Ticket</Group>
-        <SubGroup>TicketOverview</SubGroup>
-        <Setting>
+        <Navigation>TicketOverview</Navigation>
+        <Value>
             <Hash>
                 <Item Key="Junk">808080</Item>
                 <Item Key="Misc">00ff00</Item>
             </Hash>
-        </Setting>
-    </ConfigItem>
-    <ConfigItem Name="Hook::PendingTime" Required="0" Valid="1">
+        </Value>
+    </Setting>
+    <Setting Name="Hook::PendingTime" Required="0" Valid="1">
         <Description Translatable="1">Define the background color of tickets with negative reminder time. (It has to be the html colors)</Description>
-        <Group>Ticket</Group>
-        <SubGroup>TicketOverview</SubGroup>
-        <Setting>
-            <String Regex="^[A-Fa-f0-9]{6}$">ff0000</String>
-        </Setting>
-    </ConfigItem>
-    <ConfigItem Name="TicketOverview::HooksConfig###PendingTime" Required="0" Valid="0">
+        <Navigation>TicketOverview</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[A-Fa-f0-9]{6}$">ff0000</Item>
+        </Value>
+    </Setting>
+    <Setting Name="TicketOverview::HooksConfig###PendingTime" Required="0" Valid="0">
         <Description Translatable="1">Config for PendingTime hook.</Description>
-        <Group>Ticket</Group>
-        <SubGroup>TicketOverview</SubGroup>
-        <Setting>
+        <Navigation>TicketOverview</Navigation>
+        <Value>
             <Hash>
                 <Item Key="Column">State</Item>
             </Hash>
-        </Setting>
-    </ConfigItem>
-    <ConfigItem Name="Hook::Types" Required="0" Valid="1">
+        </Value>
+    </Setting>
+    <Setting Name="Hook::Types" Required="0" Valid="1">
         <Description Translatable="1">Define the background color of tickets based on types. (It has to be the html colors)</Description>
-        <Group>Ticket</Group>
-        <SubGroup>TicketOverview</SubGroup>
-        <Setting>
+        <Navigation>TicketOverview</Navigation>
+        <Value>
             <Hash>
                 <Item Key="Default">808080</Item>
                 <Item Key="Incident">00ff00</Item>
             </Hash>
-        </Setting>
-    </ConfigItem>
-    <ConfigItem Name="Hook::Types::Font" Required="0" Valid="1">
+        </Value>
+    </Setting>
+    <Setting Name="Hook::Types::Font" Required="0" Valid="1">
         <Description Translatable="1">Define the font color of tickets based on types. (It has to be the html colors)</Description>
-        <Group>Ticket</Group>
-        <SubGroup>TicketOverview</SubGroup>
-        <Setting>
+        <Navigation>TicketOverview</Navigation>
+        <Value>
             <Hash>
                 <Item Key="Default">000000</Item>
                 <Item Key="Incident">ffffff</Item>
             </Hash>
-        </Setting>
-    </ConfigItem>
-    <ConfigItem Name="Hook::Generic::Attribute" Required="0" Valid="1">
+        </Value>
+    </Setting>
+    <Setting Name="Hook::Generic::Attribute" Required="0" Valid="1">
         <Description Translatable="1">Define the attribute that is used for the generic hook</Description>
-        <Group>Ticket</Group>
-        <SubGroup>TicketOverview</SubGroup>
-        <Setting>
-            <String Regex="">Lock</String>
-        </Setting>
-    </ConfigItem>
-    <ConfigItem Name="Hook::Generic" Required="0" Valid="1">
+        <Navigation>TicketOverview</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">Lock</Item>
+        </Value>
+    </Setting>
+    <Setting Name="Hook::Generic" Required="0" Valid="1">
         <Description Translatable="1">Define the background color of tickets based on the generic attribute. (It has to be the html colors)</Description>
-        <Group>Ticket</Group>
-        <SubGroup>TicketOverview</SubGroup>
-        <Setting>
+        <Navigation>TicketOverview</Navigation>
+        <Value>
             <Hash>
                 <Item Key="lock">808080</Item>
             </Hash>
-        </Setting>
-    </ConfigItem>
-    <ConfigItem Name="Hook::Generic::Font" Required="0" Valid="1">
+        </Value>
+    </Setting>
+    <Setting Name="Hook::Generic::Font" Required="0" Valid="1">
         <Description Translatable="1">Define the font color of tickets based on the generic attribute. (It has to be the html colors)</Description>
-        <Group>Ticket</Group>
-        <SubGroup>TicketOverview</SubGroup>
-        <Setting>
+        <Navigation>TicketOverview</Navigation>
+        <Value>
             <Hash>
                 <Item Key="lock">000000</Item>
             </Hash>
-        </Setting>
-    </ConfigItem>
+        </Value>
+    </Setting>
 </otrs_config>
