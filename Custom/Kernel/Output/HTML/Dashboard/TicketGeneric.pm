@@ -1,10 +1,12 @@
 # --
-# Copyright (C) 2001-2017 OTRS AG, http://otrs.com/
+# Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2011-2016 Perl-Services.de, http://perl-services.de
 # --
+# $origin: otrs - ecfeb7aa300eac654f9d0eafaa2d3b80214607d5 - Kernel/Output/HTML/Dashboard/TicketGeneric.pm
+# --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
-# the enclosed file COPYING for license information (AGPL). If you
-# did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
 # --
 
 package Kernel::Output::HTML::Dashboard::TicketGeneric;
@@ -340,7 +342,6 @@ sub new {
         # use only the process EntityIDs
         @{ $Self->{ProcessList} } = sort keys %{$ProcessListHash};
     }
-
 # ---
 # PS
 # ---
@@ -360,6 +361,7 @@ sub new {
         }
     }
 # ---
+
 
     return $Self;
 }
@@ -636,7 +638,7 @@ sub Run {
     }
 
     # Set order for blocks.
-    $TicketSearch{OrderBy} = $TicketSearch{OrderBy} || 'Up';
+    $TicketSearch{OrderBy} = $TicketSearch{OrderBy} || 'Down';
 
     # Set previous sorting column parameter for all columns.
     $Param{SortingColumn} = $Self->{SortBy};
@@ -996,7 +998,7 @@ sub Run {
         next COLUMNNAME if !$GetColumnFilter{$ColumnName};
         $ColumnFilterLink
             .= ';' . $LayoutObject->Ascii2Html( Text => 'ColumnFilter' . $ColumnName )
-            . '=' . $LayoutObject->Ascii2Html( Text => $GetColumnFilter{$ColumnName} )
+            . '=' . $LayoutObject->LinkEncode( $GetColumnFilter{$ColumnName} );
     }
 
     my $LinkPage =
@@ -1054,7 +1056,7 @@ sub Run {
     $LayoutObject->AddJSData(
         Key   => 'InitContainerDashboard' . $Self->{Name},
         Value => {
-            SortBy => $Self->{SortBy} || 'Up',
+            SortBy  => $Self->{SortBy} || 'Age',
             OrderBy => $TicketSearch{OrderBy},
         },
     );
@@ -1067,11 +1069,11 @@ sub Run {
         if ( $Self->{SortBy} && $Self->{SortBy} eq $Item ) {
             my $TitleDesc = '';
             if ( $TicketSearch{OrderBy} eq 'Down' ) {
-                $CSS .= ' SortAscendingLarge';
+                $CSS .= ' SortDescendingLarge';
                 $TitleDesc = Translatable('sorted descending');
             }
             else {
-                $CSS .= ' SortDescendingLarge';
+                $CSS .= ' SortAscendingLarge';
                 $TitleDesc = Translatable('sorted ascending');
             }
 
@@ -1110,6 +1112,7 @@ sub Run {
                     Name             => $Self->{Name},
                     OrderBy          => $TicketSearch{OrderBy},
                     HeaderColumnName => $Item,
+                    SortingColumn    => $Param{SortingColumn},
                 },
             );
 
@@ -1150,11 +1153,11 @@ sub Run {
             if ( $Self->{SortBy} && $Self->{SortBy} eq $HeaderColumn ) {
                 my $TitleDesc = '';
                 if ( $TicketSearch{OrderBy} eq 'Down' ) {
-                    $CSS .= ' SortAscendingLarge';
+                    $CSS .= ' SortDescendingLarge';
                     $TitleDesc = Translatable('sorted descending');
                 }
                 else {
-                    $CSS .= ' SortDescendingLarge';
+                    $CSS .= ' SortAscendingLarge';
                     $TitleDesc = Translatable('sorted ascending');
                 }
 
@@ -1220,7 +1223,7 @@ sub Run {
                     Name => 'ContentLargeTicketGenericHeaderTicketNumberColumn',
                     Data => {
                         %Param,
-                        CSS => $CSS || '',
+                        CSS   => $CSS || '',
                         Name  => $Self->{Name},
                         Title => $Title,
                     },
@@ -1489,11 +1492,11 @@ sub Run {
                     )
                 {
                     if ( $TicketSearch{OrderBy} eq 'Down' ) {
-                        $CSS .= ' SortAscendingLarge';
+                        $CSS .= ' SortDescendingLarge';
                         $TitleDesc = Translatable('sorted descending');
                     }
                     else {
-                        $CSS .= ' SortDescendingLarge';
+                        $CSS .= ' SortAscendingLarge';
                         $TitleDesc = Translatable('sorted ascending');
                     }
 
@@ -1505,7 +1508,7 @@ sub Run {
                     Name => 'ContentLargeTicketGenericHeaderColumn',
                     Data => {
                         HeaderColumnName => $DynamicFieldName || '',
-                        CSS => $CSS || '',
+                        CSS              => $CSS              || '',
                     },
                 );
 
@@ -1634,7 +1637,7 @@ sub Run {
                     Name => 'ContentLargeTicketGenericHeaderColumn',
                     Data => {
                         HeaderColumnName => $DynamicFieldName || '',
-                        CSS => $CSS || '',
+                        CSS              => $CSS              || '',
                     },
                 );
 
@@ -1695,10 +1698,9 @@ sub Run {
                 Space => ' ',
             );
         }
-
-        # ---
-        # PS
-        # ---
+# ---
+# PS
+# ---
 
         # run hooks
         my $Hooks    = $Self->{HOOKS} || {};
@@ -1746,7 +1748,8 @@ sub Run {
             }
         }
 
-        # ---
+# ---
+
 
         # show ticket
         $LayoutObject->Block(
@@ -1823,7 +1826,7 @@ sub Run {
                         Age                => $EscalationData{EscalationTime},
                         TimeShowAlwaysLong => 1,
                         Space              => ' ',
-                    );
+                    ) || '-';
                     $EscalationData{EscalationTimeWorkingTime} = $LayoutObject->CustomerAge(
                         Age                => $EscalationData{EscalationTimeWorkingTime},
                         TimeShowAlwaysLong => 1,
@@ -1847,7 +1850,7 @@ sub Run {
                 elsif ( $Column eq 'EscalationSolutionTime' ) {
                     $BlockType = 'Escalation';
                     $DataValue = $LayoutObject->CustomerAge(
-                        Age => $Ticket{SolutionTime} || 0,
+                        Age                => $Ticket{SolutionTime} || 0,
                         TimeShowAlwaysLong => 1,
                         Space              => ' ',
                     );
@@ -1858,7 +1861,7 @@ sub Run {
                 elsif ( $Column eq 'EscalationResponseTime' ) {
                     $BlockType = 'Escalation';
                     $DataValue = $LayoutObject->CustomerAge(
-                        Age => $Ticket{FirstResponseTime} || 0,
+                        Age                => $Ticket{FirstResponseTime} || 0,
                         TimeShowAlwaysLong => 1,
                         Space              => ' ',
                     );
@@ -1873,7 +1876,7 @@ sub Run {
                 elsif ( $Column eq 'EscalationUpdateTime' ) {
                     $BlockType = 'Escalation';
                     $DataValue = $LayoutObject->CustomerAge(
-                        Age => $Ticket{UpdateTime} || 0,
+                        Age                => $Ticket{UpdateTime} || 0,
                         TimeShowAlwaysLong => 1,
                         Space              => ' ',
                     );
@@ -1948,7 +1951,7 @@ sub Run {
                     $LayoutObject->Block(
                         Name => "ContentLargeTicketTitle",
                         Data => {
-                            Title => "$DataValue " || '',
+                            Title      => "$DataValue " || '',
                             WholeTitle => $WholeTitle,
                             Class      => $CSSClass || '',
                         },
@@ -1959,7 +1962,7 @@ sub Run {
                     $LayoutObject->Block(
                         Name => "ContentLargeTicketGenericColumn$BlockType",
                         Data => {
-                            GenericValue => $DataValue || '',
+                            GenericValue => $DataValue || '-',
                             Class        => $CSSClass  || '',
                         },
                     );
@@ -2257,10 +2260,15 @@ sub _ColumnFilterJSON {
 
         my %Values = %{ $Param{ColumnValues} };
 
-        # set possible values
+        # Keys must be link encoded for dynamic fields because they are added to URL during filtering
+        # and can contain characters like '&', ';', etc.
+        # See bug#14497 - https://bugs.otrs.org/show_bug.cgi?id=14497.
+        my $Encoding = ( $Param{ColumnName} =~ m/^DynamicField_/ ) ? 1 : 0;
+
+        # Set possible values.
         for my $ValueKey ( sort { lc $Values{$a} cmp lc $Values{$b} } keys %Values ) {
             push @{$Data}, {
-                Key   => $ValueKey,
+                Key   => $Encoding ? $LayoutObject->LinkEncode($ValueKey) : $ValueKey,
                 Value => $Values{$ValueKey}
             };
         }
@@ -2507,7 +2515,7 @@ sub _SearchParamsGet {
         %TicketSearch,
         %DynamicFieldsParameters,
         Permission => $Self->{Config}->{Permission} || 'ro',
-        UserID => $Self->{UserID},
+        UserID     => $Self->{UserID},
     );
 
     # CustomerInformationCenter shows data per CustomerID
@@ -2554,7 +2562,7 @@ sub _SearchParamsGet {
     my %TicketSearchSummary = (
         Locked => {
             OwnerIDs => $TicketSearch{OwnerIDs} // [ $Self->{UserID}, ],
-            LockIDs => [ $LockName2ID{lock}, $LockName2ID{tmp_lock} ],
+            LockIDs  => [ $LockName2ID{lock}, $LockName2ID{tmp_lock} ],
         },
         Watcher => {
             WatchUserIDs => [ $Self->{UserID}, ],

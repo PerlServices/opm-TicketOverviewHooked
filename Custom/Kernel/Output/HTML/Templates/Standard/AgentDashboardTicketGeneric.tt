@@ -1,10 +1,12 @@
 # --
-# Copyright (C) 2001-2017 OTRS AG, http://otrs.com/
+# Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Changes Copyright (C) 2011-2016 Perl-Services.de, http://perl-services.de
 # --
+# $origin: otrs - 8207d0f681adcdeb5c1b497ac547a1d9749838d5 - Kernel/Output/HTML/Templates/Standard/AgentDashboardTicketGeneric.tt
+# --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
-# the enclosed file COPYING for license information (AGPL). If you
-# did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
 # --
 
 [% RenderBlockStart("ContentLargeTicketGenericFilter") %]
@@ -143,6 +145,7 @@
                 <tr id="TicketID_[% Data.TicketID | html %]" class="MasterAction [% Data.HookedMain | html %] [% Data.Hooked | html %]">
 # ---
 
+
 [% RenderBlockStart("GeneralOverviewRow") %]
 
 [% RenderBlockStart("ContentLargeTicketGenericRowMeta") %]
@@ -244,4 +247,3 @@
 //]]></script>
 [% END %]
 # ---
-

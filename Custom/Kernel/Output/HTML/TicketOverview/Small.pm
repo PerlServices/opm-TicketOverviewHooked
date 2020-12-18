@@ -1,10 +1,12 @@
 # --
-# Copyright (C) 2001-2017 OTRS AG, http://otrs.com/
+# Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2011-2016 Perl-Services.de http://perl-services.de/
 # --
+# $origin: otrs - 8207d0f681adcdeb5c1b497ac547a1d9749838d5 - Kernel/Output/HTML/TicketOverview/Small.pm
+# --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
-# the enclosed file COPYING for license information (AGPL). If you
-# did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
 # --
 
 package Kernel::Output::HTML::TicketOverview::Small;
@@ -474,6 +476,21 @@ sub Run {
     my $TicketObject  = $Kernel::OM->Get('Kernel::System::Ticket');
     my $ArticleObject = $Kernel::OM->Get('Kernel::System::Ticket::Article');
 
+    # Get extended ticket data if columns are used, save performance. See bug#14748.
+    my %ExtendedColumnsHash = (
+        FirstResponse          => 1,
+        FirstResponseInMin     => 1,
+        FirstResponseDiffInMin => 1,
+        SolutionInMin          => 1,
+        SolutionDiffInMin      => 1,
+        FirstLock              => 1,
+    );
+
+    my $Extended = 0;
+    if ( grep { $ExtendedColumnsHash{$_} } @{ $Self->{ColumnsEnabled} } ) {
+        $Extended = 1;
+    }
+
     for my $TicketID ( @{ $Param{TicketIDs} } ) {
         $Counter++;
         if ( $Counter >= $Param{StartHit} && $Counter < ( $Param{PageShown} + $Param{StartHit} ) ) {
@@ -513,7 +530,7 @@ sub Run {
             # Get ticket data.
             my %Ticket = $TicketObject->TicketGet(
                 TicketID      => $TicketID,
-                Extended      => 1,
+                Extended      => $Extended,
                 DynamicFields => 0,
             );
 
@@ -542,6 +559,7 @@ sub Run {
                 }
                 $Article{Subject} = $Article{Title};
             }
+
 
             # ---
             # PS
@@ -764,6 +782,8 @@ sub Run {
     # get dynamic field backend object
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
+    $Param{OrderBy} = $Param{OrderBy} || 'Up';
+
     my $TicketData = scalar @ArticleBox;
     if ($TicketData) {
 
@@ -788,24 +808,26 @@ sub Run {
                 Name => 'GeneralOverviewHeader',
             );
 
-            my $CSS = '';
-            my $OrderBy;
+            my $CSS     = '';
+            my $OrderBy = $Param{OrderBy};
             my $Link;
-            my $Title = $Item;
+            my $Title = $LayoutObject->{LanguageObject}->Translate($Item);
 
             if ( $Param{SortBy} && ( $Param{SortBy} eq $Item ) ) {
-                if ( $Param{OrderBy} && ( $Param{OrderBy} eq 'Up' ) ) {
-                    $OrderBy = 'Down';
+                my $TitleDesc;
+
+                # Change order for sorting column.
+                $OrderBy = $OrderBy eq 'Up' ? 'Down' : 'Up';
+
+                if ( $OrderBy eq 'Down' ) {
                     $CSS .= ' SortAscendingLarge';
+                    $TitleDesc = Translatable('sorted ascending');
                 }
                 else {
-                    $OrderBy = 'Up';
                     $CSS .= ' SortDescendingLarge';
+                    $TitleDesc = Translatable('sorted descending');
                 }
 
-                # set title description
-                my $TitleDesc
-                    = $OrderBy eq 'Down' ? Translatable('sorted descending') : Translatable('sorted ascending');
                 $TitleDesc = $LayoutObject->{LanguageObject}->Translate($TitleDesc);
                 $Title .= ', ' . $TitleDesc;
             }
@@ -823,7 +845,7 @@ sub Run {
                     Name => 'OverviewNavBarPageFlagEmpty',
                     Data => {
                         Name => $Item,
-                        }
+                    }
                 );
             }
             else {
@@ -842,7 +864,6 @@ sub Run {
         }
 
         my $CSS = '';
-        my $OrderBy;
 
         # show special ticket columns, if needed
         COLUMN:
@@ -853,7 +874,8 @@ sub Run {
             );
 
             $CSS = $Column;
-            my $Title = $LayoutObject->{LanguageObject}->Translate($Column);
+            my $Title   = $LayoutObject->{LanguageObject}->Translate($Column);
+            my $OrderBy = $Param{OrderBy};
 
             # output overall block so TicketNumber as well as other columns can be ordered
             $LayoutObject->Block(
@@ -864,18 +886,20 @@ sub Run {
             if ( $SpecialColumns{$Column} ) {
 
                 if ( $Param{SortBy} && ( $Param{SortBy} eq $Column ) ) {
-                    if ( $Param{OrderBy} && ( $Param{OrderBy} eq 'Up' ) ) {
-                        $OrderBy = 'Down';
+                    my $TitleDesc;
+
+                    # Change order for sorting column.
+                    $OrderBy = $OrderBy eq 'Up' ? 'Down' : 'Up';
+
+                    if ( $OrderBy eq 'Down' ) {
                         $CSS .= ' SortAscendingLarge';
+                        $TitleDesc = Translatable('sorted ascending');
                     }
                     else {
-                        $OrderBy = 'Up';
                         $CSS .= ' SortDescendingLarge';
+                        $TitleDesc = Translatable('sorted descending');
                     }
 
-                    # add title description
-                    my $TitleDesc
-                        = $OrderBy eq 'Down' ? Translatable('sorted ascending') : Translatable('sorted descending');
                     $TitleDesc = $LayoutObject->{LanguageObject}->Translate($TitleDesc);
                     $Title .= ', ' . $TitleDesc;
                 }
@@ -1049,18 +1073,20 @@ sub Run {
             elsif ( $Column !~ m{\A DynamicField_}xms ) {
 
                 if ( $Param{SortBy} && ( $Param{SortBy} eq $Column ) ) {
-                    if ( $Param{OrderBy} && ( $Param{OrderBy} eq 'Up' ) ) {
-                        $OrderBy = 'Down';
+                    my $TitleDesc;
+
+                    # Change order for sorting column.
+                    $OrderBy = $OrderBy eq 'Up' ? 'Down' : 'Up';
+
+                    if ( $OrderBy eq 'Down' ) {
                         $CSS .= ' SortAscendingLarge';
+                        $TitleDesc = Translatable('sorted ascending');
                     }
                     else {
-                        $OrderBy = 'Up';
                         $CSS .= ' SortDescendingLarge';
+                        $TitleDesc = Translatable('sorted descending');
                     }
 
-                    # add title description
-                    my $TitleDesc
-                        = $OrderBy eq 'Down' ? Translatable('sorted ascending') : Translatable('sorted descending');
                     $TitleDesc = $LayoutObject->{LanguageObject}->Translate($TitleDesc);
                     $Title .= ', ' . $TitleDesc;
                 }
@@ -1249,24 +1275,25 @@ sub Run {
 
                 if ($IsSortable) {
                     my $CSS = 'DynamicField_' . $DynamicFieldConfig->{Name};
-                    my $OrderBy;
                     if (
                         $Param{SortBy}
                         && ( $Param{SortBy} eq ( 'DynamicField_' . $DynamicFieldConfig->{Name} ) )
                         )
                     {
-                        if ( $Param{OrderBy} && ( $Param{OrderBy} eq 'Up' ) ) {
-                            $OrderBy = 'Down';
+                        my $TitleDesc;
+
+                        # Change order for sorting column.
+                        $OrderBy = $OrderBy eq 'Up' ? 'Down' : 'Up';
+
+                        if ( $OrderBy eq 'Down' ) {
                             $CSS .= ' SortAscendingLarge';
+                            $TitleDesc = Translatable('sorted ascending');
                         }
                         else {
-                            $OrderBy = 'Up';
                             $CSS .= ' SortDescendingLarge';
+                            $TitleDesc = Translatable('sorted descending');
                         }
 
-                        # add title description
-                        my $TitleDesc
-                            = $OrderBy eq 'Down' ? Translatable('sorted ascending') : Translatable('sorted descending');
                         $TitleDesc = $LayoutObject->{LanguageObject}->Translate($TitleDesc);
                         $Title .= ', ' . $TitleDesc;
                     }
@@ -1307,7 +1334,6 @@ sub Run {
                                 Label            => $Label,
                                 DynamicFieldName => $DynamicFieldConfig->{Name},
                                 ColumnFilterStrg => $ColumnFilterHTML,
-                                OrderBy          => $OrderBy,
                                 Title            => $Title,
                                 FilterTitle      => $FilterTitle,
                             },
@@ -1356,7 +1382,6 @@ sub Run {
                                 Label            => $Label,
                                 DynamicFieldName => $DynamicFieldConfig->{Name},
                                 ColumnFilterStrg => $ColumnFilterHTML,
-                                OrderBy          => $OrderBy,
                                 Title            => $Title,
                             },
                         );
@@ -1621,7 +1646,7 @@ sub Run {
                         Age                => $EscalationData{EscalationTime},
                         TimeShowAlwaysLong => 1,
                         Space              => ' ',
-                    );
+                    ) || '-';
                     $EscalationData{EscalationTimeWorkingTime} = $LayoutObject->CustomerAge(
                         Age                => $EscalationData{EscalationTimeWorkingTime},
                         TimeShowAlwaysLong => 1,
@@ -1646,7 +1671,7 @@ sub Run {
                 if ( $TicketColumn eq 'EscalationSolutionTime' ) {
                     $BlockType = 'Escalation';
                     $DataValue = $LayoutObject->CustomerAge(
-                        Age => $Article{SolutionTime} || 0,
+                        Age                => $Article{SolutionTime} || 0,
                         TimeShowAlwaysLong => 1,
                         Space              => ' ',
                     );
@@ -1657,7 +1682,7 @@ sub Run {
                 elsif ( $TicketColumn eq 'EscalationResponseTime' ) {
                     $BlockType = 'Escalation';
                     $DataValue = $LayoutObject->CustomerAge(
-                        Age => $Article{FirstResponseTime} || 0,
+                        Age                => $Article{FirstResponseTime} || 0,
                         TimeShowAlwaysLong => 1,
                         Space              => ' ',
                     );
@@ -1672,7 +1697,7 @@ sub Run {
                 elsif ( $TicketColumn eq 'EscalationUpdateTime' ) {
                     $BlockType = 'Escalation';
                     $DataValue = $LayoutObject->CustomerAge(
-                        Age => $Article{UpdateTime} || 0,
+                        Age                => $Article{UpdateTime} || 0,
                         TimeShowAlwaysLong => 1,
                         Space              => ' ',
                     );
@@ -1715,12 +1740,21 @@ sub Run {
                     $DataValue = $Article{$TicketColumn}
                         || $UserInfo{$TicketColumn}
                         || $CustomerInfo{$TicketColumn};
+
+                    # If value is in date format, change block type to 'Time' so it can be localized. See bug#14542.
+                    if (
+                        defined $DataValue
+                        && $DataValue =~ /^\d\d\d\d-(\d|\d\d)-(\d|\d\d)\s(\d|\d\d):(\d|\d\d):(\d|\d\d)/
+                        )
+                    {
+                        $BlockType = 'Time';
+                    }
                 }
 
                 $LayoutObject->Block(
                     Name => "RecordTicketColumn$BlockType",
                     Data => {
-                        GenericValue => $DataValue || '',
+                        GenericValue => $DataValue || '-',
                         Class        => $CSSClass  || '',
                     },
                 );
@@ -1851,6 +1885,12 @@ sub Run {
             Name => 'DocumentColumnFilterForm',
             Data => {},
         );
+
+        # Add UseSubQueues param if available.
+        if ( $Param{UseSubQueues} ) {
+            $Param{ColumnFilterForm}->{UseSubQueues} = $Param{UseSubQueues};
+        }
+
         for my $Element ( sort keys %{ $Param{ColumnFilterForm} } ) {
             $LayoutObject->Block(
                 Name => 'DocumentColumnFilterFormElement',
@@ -2002,7 +2042,7 @@ sub FilterContent {
     if ( $HeaderColumn eq 'CustomerUserID' ) {
         $SelectedColumn = 'CustomerUserLogin';
     }
-    if ( $HeaderColumn eq 'CustomerID' ) {
+    elsif ( $HeaderColumn eq 'CustomerID' ) {
         $SelectedColumn = 'CustomerID';
     }
     elsif ( $HeaderColumn !~ m{ \A DynamicField_ }xms ) {
@@ -2100,10 +2140,15 @@ sub _ColumnFilterJSON {
 
         my %Values = %{ $Param{ColumnValues} };
 
-        # set possible values
+        # Keys must be link encoded for dynamic fields because they are added to URL during filtering
+        # and can contain characters like '&', ';', etc.
+        # See bug#14497 - https://bugs.otrs.org/show_bug.cgi?id=14497.
+        my $Encoding = ( $Param{ColumnName} =~ m/^DynamicField_/ ) ? 1 : 0;
+
+        # Set possible values.
         for my $ValueKey ( sort { lc $Values{$a} cmp lc $Values{$b} } keys %Values ) {
             push @{$Data}, {
-                Key   => $ValueKey,
+                Key   => $Encoding ? $LayoutObject->LinkEncode($ValueKey) : $ValueKey,
                 Value => $Values{$ValueKey},
             };
         }

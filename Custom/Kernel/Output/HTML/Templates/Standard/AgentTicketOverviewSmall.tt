@@ -1,10 +1,12 @@
 # --
-# Copyright (C) 2001-2017 OTRS AG, http://otrs.com/
+# Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2011-2016 Perl-Services.de http://perl-services.de/
 # --
+# $origin: otrs - 8207d0f681adcdeb5c1b497ac547a1d9749838d5 - Kernel/Output/HTML/Templates/Standard/AgentTicketOverviewSmall.tt
+# --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
-# the enclosed file COPYING for license information (AGPL). If you
-# did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
 # --
 [% RenderBlockStart("DocumentActionRow") %]
 <ul class="Actions">
@@ -29,6 +31,7 @@
 # ---
 <script type="text/javascript" src="[% Config("Frontend::JavaScriptPath") %]PerlServices.TicketOverview.js"></script>
 # ---
+
 [% RenderBlockStart("NoTicketFound") %]
     <div id="EmptyMessageSmall">
         [% Translate("No ticket data found.") | html %]
@@ -85,14 +88,6 @@
 
 [% RenderBlockStart("ContentLargeTicketGenericHeaderColumnFilterLinkCustomerUserSearch") %]
                                 <input type="text" class="CustomerUserAutoComplete" autocomplete="off" />
-[% WRAPPER JSOnDocumentComplete %]
-<script type="text/javascript">//<![CDATA[
-Core.Config.Set('CustomerUserAutocomplete.QueryDelay', "[% Data.queryDelay | html %]");
-Core.Config.Set('CustomerUserAutocomplete.MaxResultsDisplayed', "[% Data.maxResultsDisplayed | html %]");
-Core.Config.Set('CustomerUserAutocomplete.MinQueryLength', "[% Data.minQueryLength | html %]");
-Core.Agent.TableFilters.InitCustomerUserAutocomplete( $(".CustomerUserAutoComplete") );
-//]]></script>
-[% END %]
 [% RenderBlockEnd("ContentLargeTicketGenericHeaderColumnFilterLinkCustomerUserSearch") %]
 
                             </div>
