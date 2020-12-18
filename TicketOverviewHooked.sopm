@@ -11,10 +11,10 @@
     <License>GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007</License>
     <Filelist>
         <File Permission="644" Location="Kernel/Config/Files/XML/TicketOverviewHooked.xml" />
-        <File Permission="644" Location="Kernel/Output/HTML/Dashboard/TicketGeneric.pm" />
-        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentDashboardTicketGeneric.tt" />
-        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentTicketOverviewSmall.tt" />
-        <File Permission="644" Location="Kernel/Output/HTML/TicketOverview/Small.pm" />
+        <File Permission="644" Location="Custom/Kernel/Output/HTML/Dashboard/TicketGeneric.pm" />
+        <File Permission="644" Location="Custom/Kernel/Output/HTML/Templates/Standard/AgentDashboardTicketGeneric.tt" />
+        <File Permission="644" Location="Custom/Kernel/Output/HTML/Templates/Standard/AgentTicketOverviewSmall.tt" />
+        <File Permission="644" Location="Custom/Kernel/Output/HTML/TicketOverview/Small.pm" />
         <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/Generic.pm" />
         <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/Junk.pm" />
         <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/PendingTime.pm" />
