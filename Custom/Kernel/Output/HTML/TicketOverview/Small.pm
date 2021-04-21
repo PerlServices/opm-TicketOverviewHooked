@@ -2,7 +2,7 @@
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2011-2016 Perl-Services.de http://perl-services.de/
 # --
-# $origin: otrs - 8207d0f681adcdeb5c1b497ac547a1d9749838d5 - Kernel/Output/HTML/TicketOverview/Small.pm
+# $origin: znuny - 48b8d2bc85280d702bd0d21783f5d31e2fa5fa51 - Kernel/Output/HTML/TicketOverview/Small.pm
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (GPL). If you
@@ -1744,7 +1744,7 @@ sub Run {
                     # If value is in date format, change block type to 'Time' so it can be localized. See bug#14542.
                     if (
                         defined $DataValue
-                        && $DataValue =~ /^\d\d\d\d-(\d|\d\d)-(\d|\d\d)\s(\d|\d\d):(\d|\d\d):(\d|\d\d)/
+                        && $DataValue =~ /^\d\d\d\d-(\d|\d\d)-(\d|\d\d)\s(\d|\d\d):(\d|\d\d):(\d|\d\d)$/
                         )
                     {
                         $BlockType = 'Time';
