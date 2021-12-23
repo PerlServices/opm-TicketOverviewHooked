@@ -1,8 +1,10 @@
 {
     "name": "TicketOverviewHooked",
-    "version": "6.0.3",
+    "version": "6.0.4",
     "framework": [
-        "6.0.x"
+        "6.0.x",
+        "6.1.x",
+        "6.2.x"
     ],
     "vendor": {
         "name":  "Perl-Services.de",

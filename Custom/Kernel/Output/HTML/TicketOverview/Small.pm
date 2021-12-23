@@ -1,8 +1,7 @@
 # --
-# Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
+# Copyright (C) 2001-2021 OTRS AG, https://otrs.com/
+# Copyright (C) 2021 Znuny GmbH, https://znuny.org/
 # Copyright (C) 2011-2016 Perl-Services.de http://perl-services.de/
-# --
-# $origin: znuny - 48b8d2bc85280d702bd0d21783f5d31e2fa5fa51 - Kernel/Output/HTML/TicketOverview/Small.pm
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (GPL). If you
@@ -2140,15 +2139,10 @@ sub _ColumnFilterJSON {
 
         my %Values = %{ $Param{ColumnValues} };
 
-        # Keys must be link encoded for dynamic fields because they are added to URL during filtering
-        # and can contain characters like '&', ';', etc.
-        # See bug#14497 - https://bugs.otrs.org/show_bug.cgi?id=14497.
-        my $Encoding = ( $Param{ColumnName} =~ m/^DynamicField_/ ) ? 1 : 0;
-
         # Set possible values.
         for my $ValueKey ( sort { lc $Values{$a} cmp lc $Values{$b} } keys %Values ) {
             push @{$Data}, {
-                Key   => $Encoding ? $LayoutObject->LinkEncode($ValueKey) : $ValueKey,
+                Key   => $ValueKey,
                 Value => $Values{$ValueKey},
             };
         }
