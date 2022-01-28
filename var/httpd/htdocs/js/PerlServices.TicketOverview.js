@@ -1,8 +1,5 @@
 // --
-// PerlServices.TicketOverview.js - provides functions for form handling
-// Copyright (C) 2010-2014 Perl-Services.de, http://perl-services.de
-// --
-// $Id: PerlServices.TicketOverview.js,v 1.2 2011/04/18 17:31:06 rb Exp $
+// Copyright (C) 2010 - 2022 Perl-Services.de, https://perl-services.de
 // --
 // This software comes with ABSOLUTELY NO WARRANTY. For details, see
 // the enclosed file COPYING for license information (AGPL). If you

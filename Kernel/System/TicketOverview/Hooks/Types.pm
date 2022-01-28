@@ -1,6 +1,5 @@
 # --
-# Kernel/System/TicketOverview/Hooks/Types.pm - mark tickets based on the type in ticket overview
-# Copyright (C) 2017 Perl-Services.de, http://perl-services.de
+# Copyright (C) 2017 - 2022 Perl-Services.de, https://perl-services.de
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -56,10 +55,12 @@ Returns a color when the ticket belongs to the Junk-Queue
 sub Run {
     my ( $Self, %Param ) = @_;
 
+    my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
+
     # check needed stuff
     for my $Needed (qw(Type)) {
         if ( !$Param{$Needed} ) {
-            $Self->{LogObject}->Log(
+            $LogObject->Log(
                 Priority => 'error',
                 Message  => "Need $Needed!",
             );

@@ -1,6 +1,5 @@
 # --
-# Kernel/System/TicketOverview/Hooks/PendingTime.pm - mark tickets based on the queue in ticket overview
-# Copyright (C) 2013 - 2014 Perl-Services.de, http://perl-services.de
+# Copyright (C) 2013 - 2022 Perl-Services.de, https://perl-services.de
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -19,7 +18,7 @@ our @ObjectDependencies = qw(
 
 =head1 NAME
 
-Kernel::System::TicketOverview::Hooks::Junk - mark junk tickets in ticket overview
+Kernel::System::TicketOverview::Hooks::PendingTime - mark tickets in ticket overview that have reached the pending time
 
 =head1 PUBLIC INTERFACE
 

@@ -1,6 +1,5 @@
 # --
-# Kernel/System/TicketOverview/Hooks/Junk.pm - mark junk tickets in ticket overview
-# Copyright (C) 2011-2014 Perl-Services.de, http://perl-services.de
+# Copyright (C) 2011 - 2022 Perl-Services.de, https://perl-services.de
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -11,8 +10,6 @@ package Kernel::System::TicketOverview::Hooks::Junk;
 
 use strict;
 use warnings;
-
-our $VERSION = 0.02;
 
 our @ObjectDependencies = qw(
     Kernel::Config
@@ -59,11 +56,12 @@ sub Run {
     my ( $Self, %Param ) = @_;
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+    my $LogObject    = $Kernel::OM->Get('Kernel::System::Log');
 
     # check needed stuff
     for my $Needed (qw(TicketID)) {
         if ( !$Param{$Needed} ) {
-            $Self->{LogObject}->Log(
+            $LogObject->Log(
                 Priority => 'error',
                 Message  => "Need $Needed!",
             );
