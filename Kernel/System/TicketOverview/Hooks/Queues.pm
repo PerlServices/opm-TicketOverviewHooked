@@ -11,8 +11,6 @@ package Kernel::System::TicketOverview::Hooks::Queues;
 use strict;
 use warnings;
 
-our $VERSION = 0.02;
-
 our @ObjectDependencies = qw(
     Kernel::Config
     Kernel::System::Ticket
