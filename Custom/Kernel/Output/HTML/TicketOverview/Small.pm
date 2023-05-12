@@ -1,7 +1,7 @@
 # --
 # Copyright (C) 2001-2021 OTRS AG, https://otrs.com/
 # Copyright (C) 2021-2022 Znuny GmbH, https://znuny.org/
-# Copyright (C) 2011 - 2022 Perl-Services.de https://perl-services.de/
+# Copyright (C) 2011 - 2023 Perl-Services.de https://perl-services.de/
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (GPL). If you
