@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otrs_package version="1.0">
-    <!-- GENERATED WITH OPM::Maker::Command::sopm (1.1.0) -->
+    <!-- GENERATED WITH OPM::Maker::Command::sopm (1.1.1) -->
     <Name>TicketOverviewHooked</Name>
-    <Version>6.4.1</Version>
-    <Framework>6.4.x</Framework>
+    <Version>6.5.1</Version>
+    <Framework>6.5.x</Framework>
     <Vendor>Perl-Services.de</Vendor>
-    <URL>http://www.perl-services.de</URL>
+    <URL>https://www.perl-services.de</URL>
     <Description Lang="de">Ermöglicht unterschiedliche Farben für Zeilen in der Ticketübersicht (Small).</Description>
     <Description Lang="en">Show rows in ticket overview (small) with different background colors.</Description>
     <License>GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007</License>
@@ -20,7 +20,6 @@
         <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/PendingTime.pm" />
         <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/Queues.pm" />
         <File Permission="644" Location="Kernel/System/TicketOverview/Hooks/Types.pm" />
-        <File Permission="644" Location="doc/TicketOverviewHooked.json" />
         <File Permission="644" Location="doc/en/TicketOverviewHooked.pod" />
         <File Permission="644" Location="var/httpd/htdocs/js/PerlServices.TicketOverview.js" />
     </Filelist>

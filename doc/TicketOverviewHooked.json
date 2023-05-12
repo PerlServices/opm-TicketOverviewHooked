@@ -1,8 +1,8 @@
 {
     "name": "TicketOverviewHooked",
-    "version": "6.4.1",
+    "version": "6.5.1",
     "framework": [
-        "6.4.x"
+        "6.5.x"
     ],
     "vendor": {
         "name":  "Perl-Services.de",
@@ -12,5 +12,8 @@
     "description" : {
         "en": "Show rows in ticket overview (small) with different background colors.",
         "de": "Ermöglicht unterschiedliche Farben für Zeilen in der Ticketübersicht (Small)."
-    }
+    },
+    "exclude_files" : [
+        "doc/TicketOverviewHooked.json"
+    ]
 }
