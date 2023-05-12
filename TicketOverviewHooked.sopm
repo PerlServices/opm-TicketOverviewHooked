@@ -2,8 +2,8 @@
 <otrs_package version="1.0">
     <!-- GENERATED WITH OPM::Maker::Command::sopm (1.1.1) -->
     <Name>TicketOverviewHooked</Name>
-    <Version>6.5.1</Version>
-    <Framework>6.5.x</Framework>
+    <Version>7.0.1</Version>
+    <Framework>7.0.x</Framework>
     <Vendor>Perl-Services.de</Vendor>
     <URL>https://www.perl-services.de</URL>
     <Description Lang="de">Ermöglicht unterschiedliche Farben für Zeilen in der Ticketübersicht (Small).</Description>
